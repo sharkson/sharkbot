@@ -1,5 +1,5 @@
 # sharkbot
-chatbot
+a chatbot api that uses natural language processing and machine learning
 
 setup:
 Open the SharkbotApi solution and change appsettings.json.  
