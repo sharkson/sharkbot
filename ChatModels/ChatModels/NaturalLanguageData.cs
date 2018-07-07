@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace ChatModels
+{
+    [Serializable]
+    public class NaturalLanguageData
+    {
+        public List<Sentence> sentences { get; set; }
+        public double responseConfidence { get; set; }
+        public List<ConversationSubject> proximitySubjects { get; set; }
+        public string userlessMessage { get; set; }
+    }
+}

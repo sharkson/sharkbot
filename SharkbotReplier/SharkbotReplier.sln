@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharkbotReplier", "SharkbotReplier\SharkbotReplier.csproj", "{C21230F8-1CA7-4E6C-AEA3-BAC8879362C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatModels", "..\ChatModels\ChatModels\ChatModels.csproj", "{3AD43072-9980-4B67-894C-51656A89D886}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaturalLanguageService", "..\NaturalLanguageService\NaturalLanguageService\NaturalLanguageService.csproj", "{8ED67641-090E-46FC-8D3E-171302F027D9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConversationMatcher", "..\ConversationMatcher\ConversationMatcher\ConversationMatcher.csproj", "{B5D99180-088C-4CF0-A31E-40130121C22F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C21230F8-1CA7-4E6C-AEA3-BAC8879362C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C21230F8-1CA7-4E6C-AEA3-BAC8879362C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C21230F8-1CA7-4E6C-AEA3-BAC8879362C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C21230F8-1CA7-4E6C-AEA3-BAC8879362C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AD43072-9980-4B67-894C-51656A89D886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AD43072-9980-4B67-894C-51656A89D886}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AD43072-9980-4B67-894C-51656A89D886}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AD43072-9980-4B67-894C-51656A89D886}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8ED67641-090E-46FC-8D3E-171302F027D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8ED67641-090E-46FC-8D3E-171302F027D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8ED67641-090E-46FC-8D3E-171302F027D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8ED67641-090E-46FC-8D3E-171302F027D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5D99180-088C-4CF0-A31E-40130121C22F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5D99180-088C-4CF0-A31E-40130121C22F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5D99180-088C-4CF0-A31E-40130121C22F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5D99180-088C-4CF0-A31E-40130121C22F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {32F1BA61-1E26-4A90-A365-B7EC92E4466E}
+	EndGlobalSection
+EndGlobal

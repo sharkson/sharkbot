@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ScrapySharp" Version="2.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ChatModels\ChatModels\ChatModels.csproj" />
+    <ProjectReference Include="..\..\ConversationDatabase\ConversationDatabase\ConversationDatabase.csproj" />
+    <ProjectReference Include="..\..\ConversationMatcher\ConversationMatcher\ConversationMatcher.csproj" />
+    <ProjectReference Include="..\..\GoogleMatchService\GoogleMatchService\GoogleMatchService.csproj" />
+    <ProjectReference Include="..\..\NaturalLanguageService\NaturalLanguageService\NaturalLanguageService.csproj" />
+    <ProjectReference Include="..\..\UserDatabase\UserDatabase\UserDatabase.csproj" />
+    <ProjectReference Include="..\..\UserService\UserService\UserService.csproj" />
+  </ItemGroup>
+
+</Project>
