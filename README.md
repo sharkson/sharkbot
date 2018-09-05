@@ -8,10 +8,13 @@ a chatbot api that uses natural language processing and machine learning
 - Add conversations to the ConversationDirectory (example coming later)
 - run the SharkbotApi project
 
+## clients
+- https://github.com/sharkson/angular-sharkbot
+
 ## performance
 - The initial loading of the ConversationDirectory is much faster if it's located on an SSD compared to an HDD
 - The more cores the faster it runs.  Sharkbot is heavily multi-threaded.
 
-## live bot
+## live example bot
 - You can add a live version of sharkbot to your discord channel
 - https://discordapp.com/oauth2/authorize?client_id=268518279809597453&scope=bot&permissions=0
