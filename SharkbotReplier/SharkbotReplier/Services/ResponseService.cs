@@ -93,7 +93,7 @@ namespace SharkbotReplier.Services
                 response = salutationService.GetProperlyAddressedResponse(analyzedConversation, response)
             };
 
-            //TODO: match sophistication
+            //TODO: alter reply to match sophistication
 
             return chatResponse;
         }

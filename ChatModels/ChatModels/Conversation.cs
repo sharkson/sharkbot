@@ -11,5 +11,6 @@ namespace ChatModels
         public List<ConversationSubject> subjects { get; set; }
         public string analyzationVersion { get; set; }
         public bool groupChat { get; set; }
+        public ReadingLevel readingLevel { get; set; }
     }
 }

@@ -17,6 +17,7 @@ namespace ConversationMatcher.Services
         private MatchConfidenceService matchConfidenceService;
         private GroupChatConfidenceService groupChatConfidenceService;
         private UniqueConfidenceService uniqueConfidenceService;
+        private ReadingLevelConfidenceService readingLevelConfidenceService;
 
         public MatchService()
         {
@@ -28,6 +29,7 @@ namespace ConversationMatcher.Services
             matchConfidenceService = new MatchConfidenceService();
             groupChatConfidenceService = new GroupChatConfidenceService();
             uniqueConfidenceService = new UniqueConfidenceService();
+            readingLevelConfidenceService = new ReadingLevelConfidenceService();
         }
 
         public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists)
@@ -76,6 +78,7 @@ namespace ConversationMatcher.Services
                         };
 
                         var subjectMatchConfidence = subjectConfidenceService.getSubjectMatchConfidence(targetConversation, conversation);
+                        var readingLevelMatchConfidence = readingLevelConfidenceService.getReadingLevelConfidence(targetConversation.readingLevel, conversation.readingLevel);
 
                         var responseUsers = conversation.responses.Select(r => r.chat.user).Distinct().ToList();
                         var targetUsers = targetConversation.responses.Select(r => r.chat.user).Distinct().ToList();
@@ -86,7 +89,7 @@ namespace ConversationMatcher.Services
                             {
                                 userlessReply = conversation.responses[index + 1].naturalLanguageData.userlessMessage;
                             }
-                            var matchChat = GetMatch(targetConversation, conversation.responses[index], subjectMatchConfidence, conversation.groupChat, userlessReply);
+                            var matchChat = GetMatch(targetConversation, conversation.responses[index], subjectMatchConfidence, readingLevelMatchConfidence, conversation.groupChat, userlessReply);
                             matchConversation.responses.Add(matchChat);
                         }
 
@@ -101,11 +104,12 @@ namespace ConversationMatcher.Services
         }
 
         private const double replyMatchRatio = .5;
-        private const double conversationProximityRatio = .4;
+        private const double conversationProximityRatio = .35;
         private const double subjectMatchRatio = .05;
+        private const double readingLevelMatchRatio = .05;
         private const double groupChatRatio = .05;
 
-        private MatchChat GetMatch(Conversation targetConversation, AnalyzedChat existingResponse, double subjectMatchConfidence, bool existingGroupChat, string userlessReply)
+        private MatchChat GetMatch(Conversation targetConversation, AnalyzedChat existingResponse, double subjectMatchConfidence, double readingLevelMatchConfidence, bool existingGroupChat, string userlessReply)
         {
             var targetResponse = targetConversation.responses.Last();
 
@@ -132,10 +136,12 @@ namespace ConversationMatcher.Services
 
             var subjectMatchPartScore = subjectMatchConfidence * subjectMatchRatio;
 
+            var readingLevelMatchPartScore = readingLevelMatchConfidence * readingLevelMatchRatio;
+
             var groupChatMatchConfidence = groupChatConfidenceService.getGroupChatConfidence(targetConversation.groupChat, existingGroupChat);
             var groupChatPartScore = groupChatMatchConfidence * groupChatRatio;
 
-            var confidence = (replyPartScore + proximityPartScore + subjectMatchPartScore + groupChatPartScore) * confidenceMultiplier;
+            var confidence = (replyPartScore + proximityPartScore + subjectMatchPartScore + readingLevelMatchPartScore + groupChatPartScore) * confidenceMultiplier;
 
             var length = targetResponse.naturalLanguageData.sentences.SelectMany(s => s.tokens).Count();
             if(length < 5)

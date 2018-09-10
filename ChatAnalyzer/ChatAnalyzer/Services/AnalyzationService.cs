@@ -13,6 +13,7 @@ namespace ChatAnalyzer.Services
         private ResponseAnalyzationService responseAnalyzationService;
         private ConversationTypeService conversationTypeService;
         private UserlessMessageService userlessMessageService;
+        private ConversationReadingLevelService conversationReadingLevelService;
 
         public AnalyzationService()
         {
@@ -20,6 +21,7 @@ namespace ChatAnalyzer.Services
             responseAnalyzationService = new ResponseAnalyzationService();
             conversationTypeService = new ConversationTypeService();
             userlessMessageService = new UserlessMessageService();
+            conversationReadingLevelService = new ConversationReadingLevelService();
         }
 
         public Conversation AnalyzeConversation(Conversation conversation)
@@ -59,6 +61,9 @@ namespace ChatAnalyzer.Services
             }
 
             conversation.subjects = conversationSubjectService.GetConversationSubjects(conversation.responses);
+
+            conversation.readingLevel = conversationReadingLevelService.GetReadingLevel(conversation.responses);
+
             conversation.analyzationVersion = ConfigurationService.AnalyzationVersion;
 
             return conversation;

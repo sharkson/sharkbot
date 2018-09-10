@@ -2,7 +2,7 @@
 
 namespace SharkbotApi.Services
 {
-    public class RequestValidationService
+    public class ChatRequestValidationService
     {
         public bool ValidRequest(ChatRequest chat)
         {

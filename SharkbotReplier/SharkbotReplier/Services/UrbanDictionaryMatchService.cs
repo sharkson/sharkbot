@@ -132,7 +132,7 @@ namespace SharkbotReplier.Services
                             var score = bestResult.thumbs_up - bestResult.thumbs_down;
                             if (score > scoreThreshold)
                             {
-                                return bestResult.definition;
+                                return formatDefinition((string)bestResult.definition);
                             }
                         }
                     }
@@ -140,6 +140,11 @@ namespace SharkbotReplier.Services
             }
 
             return string.Empty;
+        }
+
+        private string formatDefinition(string definition)
+        {
+            return definition.Replace("[", "").Replace("]", "");
         }
 
         private string getMatch(string source, string regex)

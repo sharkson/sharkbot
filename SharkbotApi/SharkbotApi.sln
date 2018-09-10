@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserDatabase", "..\UserData
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserService", "..\UserService\UserService\UserService.csproj", "{83301103-C5E2-4C1D-BC75-04F874C712CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextStatistics.Net", "..\TextStatistics.Net\TextStatistics.Net\TextStatistics.Net.csproj", "{C67A0A75-24C7-4C87-B51C-C5D99B979717}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{83301103-C5E2-4C1D-BC75-04F874C712CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83301103-C5E2-4C1D-BC75-04F874C712CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83301103-C5E2-4C1D-BC75-04F874C712CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C67A0A75-24C7-4C87-B51C-C5D99B979717}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C67A0A75-24C7-4C87-B51C-C5D99B979717}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C67A0A75-24C7-4C87-B51C-C5D99B979717}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C67A0A75-24C7-4C87-B51C-C5D99B979717}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

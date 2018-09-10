@@ -79,6 +79,32 @@ namespace SharkbotApi.Services
             return updated;
         }
 
+        public bool UpdateConversation(ConversationRequest conversationRequest)
+        {
+            if (conversationRequest.requestTime == null)
+            {
+                conversationRequest.requestTime = DateTime.Now;
+            }
+
+            var queueItem = new ConversationQueueItem { ConversationName = conversationRequest.name, RequestTime = conversationRequest.requestTime };
+
+            if (!ConversationTracker.activeConversationNames.Contains(queueItem))
+            {
+                ConversationTracker.activeConversationNames.Add(queueItem);
+            }
+
+            if (ConversationTracker.activeConversationNames.Any(i => i.ConversationName == conversationRequest.name && i.RequestTime < conversationRequest.requestTime))
+            {
+                return Task.Delay(1000).ContinueWith((task) => { return UpdateConversation(conversationRequest); }).Result;
+            }
+
+            var updated = UpdateDatabases(conversationRequest);
+
+            ConversationTracker.activeConversationNames.Remove(queueItem);
+
+            return updated;
+        }
+
         private ChatResponse ProcessChat(ChatRequest chat)
         {
             var stopwatch = new Stopwatch();
@@ -117,6 +143,25 @@ namespace SharkbotApi.Services
             var analyzedConversation = analyzationService.AnalyzeConversation(conversation);
             var conversationUdpdated = covnersationUpdateService.UpdateConversation(analyzedConversation, chat.type);
             userService.UpdateUsers(analyzedConversation.responses.Last());
+
+            return conversationUdpdated;
+        }
+
+        private bool UpdateDatabases(ConversationRequest conversationRequest)
+        {
+            var conversation = new Conversation
+            {
+                name = conversationRequest.name,
+                responses = conversationRequest.responses
+            };
+
+            var analyzedConversation = analyzationService.AnalyzeConversation(conversation);
+            var conversationUdpdated = covnersationUpdateService.UpdateConversation(analyzedConversation, conversationRequest.type);
+
+            foreach(var analyziedChat in analyzedConversation.responses)
+            {
+                userService.UpdateUsers(analyziedChat);
+            }
 
             return conversationUdpdated;
         }

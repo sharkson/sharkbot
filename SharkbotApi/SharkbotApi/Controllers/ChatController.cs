@@ -10,12 +10,12 @@ namespace SharkbotApi.Controllers
     public class ChatController : Controller
     {
         BotService botService;
-        RequestValidationService requestValidationService;
+        ChatRequestValidationService requestValidationService;
 
         public ChatController()
         {
             botService = new BotService();
-            requestValidationService = new RequestValidationService();
+            requestValidationService = new ChatRequestValidationService();
         }
 
         [HttpPut]

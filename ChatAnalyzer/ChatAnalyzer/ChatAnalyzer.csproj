@@ -8,6 +8,8 @@
     <ProjectReference Include="..\..\ChatModels\ChatModels\ChatModels.csproj" />
     <ProjectReference Include="..\..\NaturalLanguageService\NaturalLanguageService\NaturalLanguageService.csproj" />
     <ProjectReference Include="..\..\SharkbotConfiguration\SharkbotConfiguration\SharkbotConfiguration.csproj" />
+    <ProjectReference Include="..\..\TextStatistics.Net\TextStatistics.Net\TextStatistics.Net.csproj" />
+    <ProjectReference Include="..\..\UserDatabase\UserDatabase\UserDatabase.csproj" />
   </ItemGroup>
 
 </Project>
