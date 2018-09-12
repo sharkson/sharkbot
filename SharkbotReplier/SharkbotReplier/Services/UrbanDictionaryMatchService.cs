@@ -54,7 +54,7 @@ namespace SharkbotReplier.Services
 
         private int scoreThreshold = 5;
 
-        private List<string> definitionSearches = new List<string>() { "what does (.*) mean", "what's (.*) mean", "what is a (.*)", "what are (.*)", "what's a (.*)", "what's (.*)", "what is a (.*) ", "what are (.*) ", "what's a (.*) ", "what is a (.*)\\?", "what's a (.*)\\?", "what's (.*)\\?", "what are (.*)\\?", "what is (.*)", "what is (.*)\\?" };
+        private List<string> definitionSearches = new List<string>() { "what does (.*) mean", "what's (.*) mean", "what is a (.*)", "what are (.*)", "what's a (.*)", "what's (.*)\\?", "what's (.*)", "what is a (.*) ", "what are (.*) ", "what's a (.*) ", "what is a (.*)\\?", "what's a (.*)\\?", "what are (.*)\\?", "what is (.*)", "what is (.*)\\?" };
         private List<string> excludedWords = new List<string>() { "it", "that", "they" };
 
         public ChatResponse GetDefinition(string word)
@@ -86,7 +86,9 @@ namespace SharkbotReplier.Services
                     var score = bestResult.thumbs_up - bestResult.thumbs_down;
                     if (score > scoreThreshold)
                     {
-                        return new ChatResponse() { response = bestResult.definition, confidence = score };
+                        var response = new List<string>();
+                        response.Add(formatDefinition((string)bestResult.definition));
+                        return new ChatResponse() { response = response, confidence = score };
                     }
                 }
             }
@@ -130,7 +132,7 @@ namespace SharkbotReplier.Services
                         result = JObject.Parse(result);
                         if (result.list.Count > 0)
                         {
-                            var bestResult = ((IEnumerable)result.list).Cast<dynamic>().OrderByDescending(e => e.thumbs_up - e.thumbs_down).FirstOrDefault();
+                            var bestResult = ((IEnumerable)result.list).Cast<dynamic>().Where(e => ((string)e.word).ToLower() == word.ToLower()).OrderByDescending(e => e.thumbs_up - e.thumbs_down).FirstOrDefault();
                             var score = bestResult.thumbs_up - bestResult.thumbs_down;
                             if (score > scoreThreshold)
                             {

@@ -36,7 +36,7 @@ namespace SharkbotApi.Services
 
             var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = (DateTime)chat.requestTime };
 
-            if(!ConversationTracker.activeConversationNames.Contains(queueItem))
+            if(!ConversationTracker.activeConversationNames.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
             {
                 ConversationTracker.activeConversationNames.Add(queueItem);
             }
@@ -48,7 +48,7 @@ namespace SharkbotApi.Services
 
             var processedChat = ProcessChat(chat);
 
-            ConversationTracker.activeConversationNames.Remove(queueItem);
+            ConversationTracker.activeConversationNames.RemoveAll(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime);
 
             return processedChat;
         }
@@ -62,7 +62,7 @@ namespace SharkbotApi.Services
 
             var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = (DateTime)chat.requestTime };
 
-            if (!ConversationTracker.activeConversationNames.Contains(queueItem))
+            if (!ConversationTracker.activeConversationNames.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
             {
                 ConversationTracker.activeConversationNames.Add(queueItem);
             }
@@ -74,7 +74,7 @@ namespace SharkbotApi.Services
 
             var updated = UpdateDatabases(chat);
 
-            ConversationTracker.activeConversationNames.Remove(queueItem);
+            ConversationTracker.activeConversationNames.RemoveAll(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime);
 
             return updated;
         }
@@ -88,7 +88,7 @@ namespace SharkbotApi.Services
 
             var queueItem = new ConversationQueueItem { ConversationName = conversationRequest.name, RequestTime = conversationRequest.requestTime };
 
-            if (!ConversationTracker.activeConversationNames.Contains(queueItem))
+            if (!ConversationTracker.activeConversationNames.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
             {
                 ConversationTracker.activeConversationNames.Add(queueItem);
             }
@@ -100,7 +100,7 @@ namespace SharkbotApi.Services
 
             var updated = UpdateDatabases(conversationRequest);
 
-            ConversationTracker.activeConversationNames.Remove(queueItem);
+            ConversationTracker.activeConversationNames.RemoveAll(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime);
 
             return updated;
         }
