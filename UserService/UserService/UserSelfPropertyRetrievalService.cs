@@ -26,11 +26,12 @@ namespace UserService
                     {
                         confidence = .75;
                     }
-                    var response = getYourPropertySentence(requestedProperty);
+                    var response = new List<string>();
+                    response.Add(getYourPropertySentence(requestedProperty));
                     return new ChatResponse { confidence = confidence, response = response };
                 }
             }
-            return new ChatResponse { confidence = 0, response = string.Empty };
+            return new ChatResponse { confidence = 0, response = new List<string>() };
         }
 
         private List<string> selfPropertySearch = new List<string>() { "am i (\\p{L}*)", "i'm (\\p{L}*)\\?" };
@@ -73,10 +74,11 @@ namespace UserService
                 {
                     confidence = .75;
                 }
-                var response = getOtherPropertySentence(requestedUserNameAndProperty);
+                var response = new List<string>();
+                response.Add(getOtherPropertySentence(requestedUserNameAndProperty));
                 return new ChatResponse { confidence = confidence, response = response };
             }
-            return new ChatResponse { confidence = 0, response = string.Empty };
+            return new ChatResponse { confidence = 0, response = new List<string>() };
         }
 
         private List<string> otherPropertySearch = new List<string>() { "is (\\p{L}*) (\\p{L}*)" };

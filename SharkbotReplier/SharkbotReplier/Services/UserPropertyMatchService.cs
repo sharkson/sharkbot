@@ -1,4 +1,5 @@
 ﻿using ChatModels;
+using System.Collections.Generic;
 using System.Linq;
 using UserService;
 
@@ -23,14 +24,14 @@ namespace SharkbotReplier.Services
             if (userData != null)
             {
                 var userResponse = userPropertyRetrievalService.GetYourPropertyResponse(analyzedChat, userData);
-                if (!string.IsNullOrEmpty(userResponse.response))
+                if (userResponse.response.Count > 0)
                 {
                     return userResponse;
                 }
                 else
                 {
                     var otherResponse = userPropertyRetrievalService.GetOtherPropertyResponse(analyzedChat, UserDatabase.UserDatabase.userDatabase);
-                    if (!string.IsNullOrEmpty(otherResponse.response))
+                    if (otherResponse.response.Count > 0)
                     {
                         return otherResponse;
                     }
@@ -40,7 +41,7 @@ namespace SharkbotReplier.Services
                         if (botData != null)
                         {
                             var botResponse = botPropertyRetrievalService.GetPropertyResponse(analyzedChat, botData);
-                            if (!string.IsNullOrEmpty(botResponse.response))
+                            if (botResponse.response.Count > 0)
                             {
                                 return botResponse;
                             }
@@ -49,7 +50,7 @@ namespace SharkbotReplier.Services
                 }
             }
 
-            return new ChatResponse { confidence = 0, response = string.Empty };
+            return new ChatResponse { confidence = 0, response = new List<string>() };
         }
     }
 }

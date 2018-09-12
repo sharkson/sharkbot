@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ChatModels
 {
@@ -6,7 +7,7 @@ namespace ChatModels
     public class MatchChat
     {
         public AnalyzedChat analyzedChat { get; set; }
-        public AnalyzedChat responseChat { get; set; }
+        public List<AnalyzedChat> responseChat { get; set; }
         public double matchConfidence { get; set; }
     }
 }

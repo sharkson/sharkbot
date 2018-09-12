@@ -49,7 +49,7 @@ namespace ConversationMatcher.Services
                             bestMatch.analyzedChat = conversation.responses[index].analyzedChat;
                             if (index + 1 < conversation.responses.Count)
                             {
-                                bestMatch.responseChat = conversation.responses[index + 1].analyzedChat;
+                                bestMatch.responseChat = GetResponseChat(conversation.responses, index);
                             }
                         }
                     }
@@ -57,6 +57,36 @@ namespace ConversationMatcher.Services
             }
 
             return bestMatch;
+        }
+
+        private List<AnalyzedChat> GetResponseChat(List<MatchChat> conversation, int targetIndex)
+        {
+            var response = new List<AnalyzedChat>();
+
+            var replyIndex = targetIndex + 1;
+            response.Add(conversation[replyIndex].analyzedChat);
+            replyIndex++;
+
+            while(replyIndex < conversation.Count)
+            {
+                if (IsChainedReply(response.Last().chat, conversation[replyIndex].analyzedChat.chat))
+                {
+                    response.Add(conversation[replyIndex].analyzedChat);
+                    replyIndex++;
+                }
+                else
+                {
+                    return response;
+                }
+            }
+
+            return response;
+        }
+        
+        private bool IsChainedReply(Chat chat, Chat reply)
+        {
+            var maximumReplyTime = 60000;
+            return chat.user == reply.user && chat.time + maximumReplyTime > reply.time;
         }
 
         private List<ConversationMatchList> GetConversationMatchLists(Conversation targetConversation, List<ConversationList> conversationLists)

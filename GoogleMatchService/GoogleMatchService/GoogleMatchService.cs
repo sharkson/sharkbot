@@ -2,6 +2,7 @@
 using ScrapySharp.Extensions;
 using ScrapySharp.Network;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
@@ -23,13 +24,16 @@ namespace GoogleMatchService
             var request = conversation.responses.Last();
             var searchText = request.chat.message.Replace("@" + request.chat.botName, string.Empty).Replace(request.chat.botName, string.Empty);
 
+            var response = new List<string>();
+
             var googleResult = GetSearchResult(searchText);
             if (!string.IsNullOrWhiteSpace(googleResult))
             {
-                return new ChatResponse { confidence = googleConfidence, response = googleResult };
+                response.Add(googleResult);
+                return new ChatResponse { confidence = googleConfidence, response = response };
             }
 
-            return new ChatResponse { confidence = 0, response = string.Empty };
+            return new ChatResponse { confidence = 0, response = response };
         }
 
         private string GetSearchResult(string searchString)

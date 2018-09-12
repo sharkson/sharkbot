@@ -8,7 +8,7 @@ namespace ChatModels
         public Chat chat { get; set; }
         public string conversationName { get; set; }
         public string type { get; set; }
-        public DateTime requestTime { get; set; }
+        public DateTime? requestTime { get; set; }
         public dynamic metadata { get; set; }
     }
 }

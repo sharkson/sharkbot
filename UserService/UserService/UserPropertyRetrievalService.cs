@@ -29,7 +29,8 @@ namespace UserService
                     {
                         confidence = .75;
                     }
-                    var response = getYourPropertySentence(requestedProperty);
+                    var response = new List<string>();
+                    response.Add(getYourPropertySentence(requestedProperty));
                     return new ChatResponse { confidence = confidence, response = response };
                 }
             }
@@ -81,7 +82,8 @@ namespace UserService
                 {
                     confidence = .75;
                 }
-                var response = getOtherPropertySentence(requestedUserNameAndProperty);
+                var response = new List<string>();
+                response.Add(getOtherPropertySentence(requestedUserNameAndProperty));
                 return new ChatResponse { confidence = confidence, response = response };
             }
             return userSelfPropertyRetrievalService.GetOtherPropertyResponse(analyzedChat, users);

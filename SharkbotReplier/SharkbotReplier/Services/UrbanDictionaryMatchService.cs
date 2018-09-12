@@ -21,7 +21,9 @@ namespace SharkbotReplier.Services
             var matchedDefinition = GetDefinitionFormatMatch(request);
             if (!string.IsNullOrWhiteSpace(matchedDefinition))
             {
-                return new ChatResponse { confidence = urbanDictionaryMatchScore, response = matchedDefinition };
+                var response = new List<string>();
+                response.Add(matchedDefinition);
+                return new ChatResponse { confidence = urbanDictionaryMatchScore, response = response };
             }
 
             if (request.naturalLanguageData.sentences[0].triplets.objectTriplet != null)
@@ -47,7 +49,7 @@ namespace SharkbotReplier.Services
                 }
             }
 
-            return new ChatResponse() { response = string.Empty, confidence = 0 };
+            return new ChatResponse() { response = new List<string>(), confidence = 0 };
         }
 
         private int scoreThreshold = 5;
@@ -59,7 +61,7 @@ namespace SharkbotReplier.Services
         {
             if (excludedWords.Any(e => word.Contains(e)))
             {
-                return new ChatResponse() { response = string.Empty, confidence = 0 };
+                return new ChatResponse() { response = new List<string>(), confidence = 0 };
             }
 
             dynamic result = string.Empty;
@@ -89,7 +91,7 @@ namespace SharkbotReplier.Services
                 }
             }
 
-            return new ChatResponse() { response = string.Empty, confidence = 0 };
+            return new ChatResponse() { response = new List<string>(), confidence = 0 };
         }
 
         private string GetDefinitionFormatMatch(AnalyzedChat chat)

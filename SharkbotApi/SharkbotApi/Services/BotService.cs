@@ -34,7 +34,7 @@ namespace SharkbotApi.Services
                 chat.requestTime = DateTime.Now;
             }
 
-            var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = chat.requestTime };
+            var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = (DateTime)chat.requestTime };
 
             if(!ConversationTracker.activeConversationNames.Contains(queueItem))
             {
@@ -60,7 +60,7 @@ namespace SharkbotApi.Services
                 chat.requestTime = DateTime.Now;
             }
 
-            var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = chat.requestTime };
+            var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = (DateTime)chat.requestTime };
 
             if (!ConversationTracker.activeConversationNames.Contains(queueItem))
             {

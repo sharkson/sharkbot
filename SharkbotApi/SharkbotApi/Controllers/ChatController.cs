@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using SharkbotApi.Services;
+using System.Collections.Generic;
 
 namespace SharkbotApi.Controllers
 {
@@ -32,7 +33,7 @@ namespace SharkbotApi.Controllers
             {
                 metadata = chat.metadata;
             }
-            return new ChatResponse { confidence = 0, response = string.Empty, metadata = metadata };
+            return new ChatResponse { confidence = 0, response = new List<string>(), metadata = metadata };
         }
     }
 }

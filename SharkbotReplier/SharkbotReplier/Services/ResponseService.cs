@@ -1,4 +1,5 @@
 ﻿using ChatModels;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -82,7 +83,7 @@ namespace SharkbotReplier.Services
 
             if (matchChat.responseChat == null)
             {
-                return new ChatResponse { confidence = 0, response = string.Empty };
+                return new ChatResponse { confidence = 0, response = new List<string>() };
             }
 
             var response = responseConversionService.ConvertResponse(analyzedConversation.responses.Last(), matchChat);

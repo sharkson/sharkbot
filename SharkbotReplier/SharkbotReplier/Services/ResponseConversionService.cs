@@ -1,36 +1,43 @@
 ﻿using ChatModels;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SharkbotReplier.Services
 {
     public class ResponseConversionService
     {
-        public string ConvertResponse(AnalyzedChat target, MatchChat match)
+        public List<string> ConvertResponse(AnalyzedChat target, MatchChat match)
         {
-            var chat = PaddedString(match.responseChat.chat.message);
-            chat = chat.Replace("@" + match.analyzedChat.chat.user, "@" + target.chat.user);
-
-            var originalUser = PaddedString(match.analyzedChat.chat.user);
-            var user = PaddedString(target.chat.user);
-            
-            chat = chat.Replace(originalUser, user);
-
-            var userData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(u => u.userName == target.chat.user);
-            if(userData != null)
+            var responses = new List<string>();
+            foreach(var matchChat in match.responseChat)
             {
-                user = PaddedString(userData.nickNames.Last());
-            }
+                var chat = PaddedString(matchChat.chat.message);
+                chat = chat.Replace("@" + match.analyzedChat.chat.user, "@" + target.chat.user);
 
-            var originalUserData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(u => u.userName == match.analyzedChat.chat.user);
-            if (originalUserData != null)
-            {
-                foreach (var originalUserName in originalUserData.nickNames)
+                var originalUser = PaddedString(match.analyzedChat.chat.user);
+                var user = PaddedString(target.chat.user);
+
+                chat = chat.Replace(originalUser, user);
+
+                var userData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(u => u.userName == target.chat.user);
+                if (userData != null)
                 {
-                    chat = chat.Replace(PaddedString(originalUserName), user);
+                    user = PaddedString(userData.nickNames.Last());
                 }
+
+                var originalUserData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(u => u.userName == match.analyzedChat.chat.user);
+                if (originalUserData != null)
+                {
+                    foreach (var originalUserName in originalUserData.nickNames)
+                    {
+                        chat = chat.Replace(PaddedString(originalUserName), user);
+                    }
+                }
+
+                responses.Add(chat.Trim());
             }
 
-            return chat.Trim();
+            return responses;
         }
 
         private string PaddedString(string input)

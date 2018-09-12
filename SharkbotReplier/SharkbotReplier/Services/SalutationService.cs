@@ -1,29 +1,34 @@
 ﻿using ChatModels;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SharkbotReplier.Services
 {
     public class SalutationService
     {
-        public string GetProperlyAddressedResponse(Conversation analyzedConversation, string response)
+        public List<string> GetProperlyAddressedResponse(Conversation analyzedConversation, List<string> responses)
         {
             var analyzedChat = analyzedConversation.responses.Last();
 
-            if (analyzedChat.chat.message.Contains("@" + analyzedChat.botName) && !response.Contains(analyzedChat.chat.user))
+            if(responses.Count > 0)
             {
-                response = "@" + analyzedChat.chat.user + " " + response;
-            }
-            else if (analyzedChat.chat.message.Contains(analyzedChat.botName) && !response.Contains(analyzedChat.chat.user))
-            {
-                var nickName = analyzedChat.chat.user;
-                var userData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(u => u.userName == analyzedChat.chat.user);
-                if (userData != null)
+                if (analyzedChat.chat.message.Contains("@" + analyzedChat.botName) && !responses[0].Contains(analyzedChat.chat.user))
                 {
-                    nickName = userData.nickNames.Last();
+                    responses[0] = "@" + analyzedChat.chat.user + " " + responses[0];
                 }
-                response = nickName + " " + response;
+                else if (analyzedChat.chat.message.Contains(analyzedChat.botName) && !responses[0].Contains(analyzedChat.chat.user))
+                {
+                    var nickName = analyzedChat.chat.user;
+                    var userData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(u => u.userName == analyzedChat.chat.user);
+                    if (userData != null)
+                    {
+                        nickName = userData.nickNames.Last();
+                    }
+                    responses[0] = nickName + " " + responses[0];
+                }
             }
-            return response;
+            
+            return responses;
         }
     }
 }

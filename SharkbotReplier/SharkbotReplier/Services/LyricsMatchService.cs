@@ -1,4 +1,5 @@
 ﻿using ChatModels;
+using System.Collections.Generic;
 
 namespace SharkbotReplier.Services
 {
@@ -6,7 +7,7 @@ namespace SharkbotReplier.Services
     {
         public ChatResponse GetLyricsMatch(Conversation analyzedConversation)
         {
-            return new ChatResponse { confidence = 0, response = string.Empty }; //TODO
+            return new ChatResponse { confidence = 0, response = new List<string>() }; //TODO
         }
     }
 }
