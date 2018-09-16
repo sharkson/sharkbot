@@ -98,5 +98,37 @@ namespace SharkbotReplier.Services
 
             return chatResponse;
         }
+
+        public ChatResponse GetResponse(Conversation analyzedConversation, List<string> types, List<string> requiredProperyMatches)
+        {
+            //TODO: change type to list of types, pass that in. if it's empty do any
+            var conversationChatResponse = conversationMatchService.GetConversationMatch(analyzedConversation, types, requiredProperyMatches);
+            var userPropertyChatResponse = userPropertyService.GetUserPropertyMatch(analyzedConversation);
+
+            var matchChat = conversationChatResponse;
+
+            if (userPropertyChatResponse.confidence > conversationChatResponse.matchConfidence) //TODO: check the uniqueness of reply (if it was already used)
+            {
+                userPropertyChatResponse.response = salutationService.GetProperlyAddressedResponse(analyzedConversation, userPropertyChatResponse.response);
+                return userPropertyChatResponse;
+            }
+
+            if (matchChat.responseChat == null)
+            {
+                return new ChatResponse { confidence = 0, response = new List<string>() };
+            }
+
+            var response = responseConversionService.ConvertResponse(analyzedConversation.responses.Last(), matchChat);
+
+            var chatResponse = new ChatResponse
+            {
+                confidence = matchChat.matchConfidence,
+                response = salutationService.GetProperlyAddressedResponse(analyzedConversation, response)
+            };
+
+            //TODO: alter reply to match sophistication
+
+            return chatResponse;
+        }
     }
 }

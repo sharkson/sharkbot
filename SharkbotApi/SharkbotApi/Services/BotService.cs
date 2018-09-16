@@ -36,21 +36,19 @@ namespace SharkbotApi.Services
 
             var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = (DateTime)chat.requestTime };
 
-            if(!ConversationTracker.activeConversationNames.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
+            if (!ConversationTracker.requestQueue.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
             {
-                ConversationTracker.activeConversationNames.Add(queueItem);
+                ConversationTracker.requestQueue.Enqueue(queueItem);
             }
 
-            if (ConversationTracker.activeConversationNames.Any(i => i.ConversationName == chat.conversationName && i.RequestTime < chat.requestTime))
+            ConversationQueueItem peekedQueueItem;
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
             {
-                return Task.Delay(1000).ContinueWith((task) => { return GetResponse(chat); }).Result;
+                var response = ProcessChat(chat);
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                return response;
             }
-
-            var processedChat = ProcessChat(chat);
-
-            ConversationTracker.activeConversationNames.RemoveAll(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime);
-
-            return processedChat;
+            return Task.Delay(1000).ContinueWith((task) => { return GetResponse(chat); }).Result;
         }
 
         public bool UpdateConversation(ChatRequest chat)
@@ -62,21 +60,19 @@ namespace SharkbotApi.Services
 
             var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = (DateTime)chat.requestTime };
 
-            if (!ConversationTracker.activeConversationNames.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
+            if (!ConversationTracker.requestQueue.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
             {
-                ConversationTracker.activeConversationNames.Add(queueItem);
+                ConversationTracker.requestQueue.Enqueue(queueItem);
             }
 
-            if (ConversationTracker.activeConversationNames.Any(i => i.ConversationName == chat.conversationName && i.RequestTime < chat.requestTime))
+            ConversationQueueItem peekedQueueItem;
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
             {
-                return Task.Delay(1000).ContinueWith((task) => { return UpdateConversation(chat); }).Result;
+                var updated = UpdateDatabases(chat);
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                return updated;
             }
-
-            var updated = UpdateDatabases(chat);
-
-            ConversationTracker.activeConversationNames.RemoveAll(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime);
-
-            return updated;
+            return Task.Delay(1000).ContinueWith((task) => { return UpdateConversation(chat); }).Result;
         }
 
         public bool UpdateConversation(ConversationRequest conversationRequest)
@@ -88,21 +84,19 @@ namespace SharkbotApi.Services
 
             var queueItem = new ConversationQueueItem { ConversationName = conversationRequest.name, RequestTime = conversationRequest.requestTime };
 
-            if (!ConversationTracker.activeConversationNames.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
+            if (!ConversationTracker.requestQueue.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
             {
-                ConversationTracker.activeConversationNames.Add(queueItem);
+                ConversationTracker.requestQueue.Enqueue(queueItem);
             }
 
-            if (ConversationTracker.activeConversationNames.Any(i => i.ConversationName == conversationRequest.name && i.RequestTime < conversationRequest.requestTime))
+            ConversationQueueItem peekedQueueItem;
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
             {
-                return Task.Delay(1000).ContinueWith((task) => { return UpdateConversation(conversationRequest); }).Result;
+                var updated = UpdateDatabases(conversationRequest);
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                return updated;
             }
-
-            var updated = UpdateDatabases(conversationRequest);
-
-            ConversationTracker.activeConversationNames.RemoveAll(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime);
-
-            return updated;
+            return Task.Delay(1000).ContinueWith((task) => { return UpdateConversation(conversationRequest); }).Result;
         }
 
         private ChatResponse ProcessChat(ChatRequest chat)
@@ -130,7 +124,15 @@ namespace SharkbotApi.Services
             Debug.WriteLine("UpdateUser " + stopwatch.Elapsed);
 
             stopwatch.Start();
-            var response = responseService.GetResponse(analyzedConversation);
+            ChatResponse response;
+            if ((chat.exclusiveTypes != null && chat.exclusiveTypes.Count > 0) || (chat.requiredProperyMatches != null && chat.requiredProperyMatches.Count > 0))
+            {
+                response = responseService.GetResponse(analyzedConversation, chat.exclusiveTypes, chat.requiredProperyMatches);
+            }
+            else
+            {
+                response = responseService.GetResponse(analyzedConversation);
+            }
             stopwatch.Stop();
             Debug.WriteLine("GetResponse " + stopwatch.Elapsed);
 

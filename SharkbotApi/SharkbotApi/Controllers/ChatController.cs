@@ -24,10 +24,16 @@ namespace SharkbotApi.Controllers
         {
             if(requestValidationService.ValidRequest(chat))
             {
+                if(chat.requiredProperyMatches == null)
+                {
+                    chat.requiredProperyMatches = new List<string>();
+                }
+
                 var response = botService.GetResponse(chat);
                 response.metadata = chat.metadata;
                 return response;
             }
+
             dynamic metadata = null;
             if(chat != null && chat.metadata != null)
             {

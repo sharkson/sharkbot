@@ -59,6 +59,33 @@ namespace ConversationMatcher.Services
             return bestMatch;
         }
 
+        public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists, List<UserData> matchingUsers)
+        {
+            var bestMatch = new MatchChat { matchConfidence = 0 };
+
+            var conversationMatchLists = GetConversationMatchLists(targetConversation, conversationLists);
+            foreach (var conversationMatchList in conversationMatchLists)
+            {
+                foreach (var conversation in conversationMatchList.matchConversations)
+                {
+                    for (var index = 0; index < conversation.responses.Count; index++)
+                    {
+                        if (conversation.responses[index].matchConfidence > bestMatch.matchConfidence && matchingUsers.Any(user => user.userName == conversation.responses[index].analyzedChat.chat.user))
+                        {
+                            bestMatch.matchConfidence = conversation.responses[index].matchConfidence;
+                            bestMatch.analyzedChat = conversation.responses[index].analyzedChat;
+                            if (index + 1 < conversation.responses.Count)
+                            {
+                                bestMatch.responseChat = GetResponseChat(conversation.responses, index);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return bestMatch;
+        }
+
         private List<AnalyzedChat> GetResponseChat(List<MatchChat> conversation, int targetIndex)
         {
             var response = new List<AnalyzedChat>();
@@ -141,6 +168,8 @@ namespace ConversationMatcher.Services
 
         private MatchChat GetMatch(Conversation targetConversation, AnalyzedChat existingResponse, double subjectMatchConfidence, double readingLevelMatchConfidence, bool existingGroupChat, string userlessReply)
         {
+            //TODO: add the ability to pass in a required user property that the responding user has to have, or that the matching response has to have
+            //TODO: add user comparison and user similarity to the algorithm for confidence
             var targetResponse = targetConversation.responses.Last();
 
             var matchChat = new MatchChat
@@ -149,7 +178,7 @@ namespace ConversationMatcher.Services
                 analyzedChat = existingResponse
             };
 
-            if(existingResponse.naturalLanguageData.responseConfidence == 0)
+            if(existingResponse.naturalLanguageData.responseConfidence == 0) //TODO: if the responding user name is in the excluded list set confidence to 0 and return
             {
                 return matchChat;
             }

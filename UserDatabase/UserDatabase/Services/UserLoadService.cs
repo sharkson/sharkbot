@@ -37,6 +37,10 @@ namespace UserDatabase.Services
                         {
                             userData.properties = new List<UserProperty>();
                         }
+                        if (userData.derivedProperties == null)
+                        {
+                            userData.derivedProperties = new List<UserProperty>();
+                        }
                         userDataList.Add(userData);
                     }
                 }

@@ -21,6 +21,7 @@ namespace ChatModels
             fileName = new string(name.Select(ch => invalidFileNameChars.Contains(ch) ? '_' : ch).ToArray());
             nickNames = new List<string>() { name };
             properties = new List<UserProperty>();
+            derivedProperties = new List<UserProperty>();
         }
 
         public string userName { get; set; }
@@ -30,6 +31,8 @@ namespace ChatModels
         public List<string> nickNames { get; set; }
 
         public List<UserProperty> properties { get; set; }
+
+        public List<UserProperty> derivedProperties { get; set; }
 
         public string analyzationVersion { get; set; }
     }

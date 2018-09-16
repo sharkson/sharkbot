@@ -8,10 +8,10 @@ namespace UserService
     public class UserPropertyService
     {
         private List<string> propertySearchNameValue = new List<string>() { "my (\\p{L}*) is (\\p{L}*)", "my (\\p{L}*) are (\\p{L}*)" };
-        private List<string> propertySearchValueName = new List<string>() { "i have (\\p{L}*) (\\p{L}*)" };
-        private List<string> selfPropertySearchValueName = new List<string>() { "i am (\\p{L}*)", "i'm (\\p{L}*)" };
+        private List<string> propertySearchValueName = new List<string>() { "i have an (\\p{L}*) (\\p{L}*)", "i have a (\\p{L}*) (\\p{L}*)", "i have (\\p{L}*) (\\p{L}*)" };
+        private List<string> selfPropertySearchValueName = new List<string>() { "i am a (\\p{L}*)", "i am an (\\p{L}*)", "i am (\\p{L}*)", "i'm a (\\p{L}*)", "i'm an (\\p{L}*)", "i'm (\\p{L}*)" };
         private List<string> selfPropertySearchUserValueName = new List<string>() { "(\\p{L}*) is (\\p{L}*)" };
-        private List<string> propertySearchUserValueName = new List<string>() { "(\\p{L}*) has (\\p{L}*) (\\p{L}*)", "(\\p{L}*) has a (\\p{L}*) (\\p{L}*)" };
+        private List<string> propertySearchUserValueName = new List<string>() { "(\\p{L}*) has a (\\p{L}*) (\\p{L}*)", "(\\p{L}*) has an (\\p{L}*) (\\p{L}*)", "(\\p{L}*) has (\\p{L}*) (\\p{L}*)" };
         private List<string> excludePropertySearch = new List<string>();
 
         public UserProperty GetProperty(AnalyzedChat analyzedChat)
@@ -25,6 +25,7 @@ namespace UserService
                     if (!string.IsNullOrWhiteSpace(match.name) && !string.IsNullOrWhiteSpace(match.value) && isNaturalLanguagePropertyName(analyzedChat, match.name) && isNaturalLanguagePropertyValue(analyzedChat, match.value))
                     {
                         match.source = analyzedChat.chat.user;
+                        match.time = analyzedChat.chat.time;
                         return match;
                     }
                 }
@@ -34,6 +35,7 @@ namespace UserService
                     if (!string.IsNullOrWhiteSpace(match.name) && !string.IsNullOrWhiteSpace(match.value) && isNaturalLanguagePropertyName(analyzedChat, match.name) && isNaturalLanguagePropertyValue(analyzedChat, match.value))
                     {
                         match.source = analyzedChat.chat.user;
+                        match.time = analyzedChat.chat.time;
                         return match;
                     }
                 }
@@ -43,6 +45,7 @@ namespace UserService
                     if (!string.IsNullOrWhiteSpace(match.value) && isNaturalLanguageSelfProperty(analyzedChat, match.value))
                     {
                         match.source = analyzedChat.chat.user;
+                        match.time = analyzedChat.chat.time;
                         return match;
                     }
                 }

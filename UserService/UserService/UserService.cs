@@ -7,12 +7,14 @@ namespace UserService
     {
         private UserNickNameService userNickNameService;
         private UserPropertyService userPropertyService;
+        private UserDerivedPropertyService userDerivedPropertyService;
         private UserSaveService userSaveService;
 
         public UserService()
         {
             userNickNameService = new UserNickNameService();
             userPropertyService = new UserPropertyService();
+            userDerivedPropertyService = new UserDerivedPropertyService();
             userSaveService = new UserSaveService();
         }
 
@@ -37,6 +39,8 @@ namespace UserService
                 {
                     usersData[index].properties.Add(property);
                 }
+                usersData[index].derivedProperties.AddRange(userDerivedPropertyService.GetDerivedProperties(analyzedChat, property, usersData[index]));
+
                 userSaveService.SaveUserData(usersData[index]);
             }
             else
@@ -51,6 +55,8 @@ namespace UserService
                             userData.nickNames.Add(nickName);
                         }
                     }
+                    userData.derivedProperties.AddRange(userDerivedPropertyService.GetDerivedProperties(analyzedChat, property, userData));
+
                     usersData.Add(userData);
                     userSaveService.SaveUserData(userData);
                 }

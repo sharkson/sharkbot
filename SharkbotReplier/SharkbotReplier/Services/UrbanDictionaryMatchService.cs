@@ -133,10 +133,13 @@ namespace SharkbotReplier.Services
                         if (result.list.Count > 0)
                         {
                             var bestResult = ((IEnumerable)result.list).Cast<dynamic>().Where(e => ((string)e.word).ToLower() == word.ToLower()).OrderByDescending(e => e.thumbs_up - e.thumbs_down).FirstOrDefault();
-                            var score = bestResult.thumbs_up - bestResult.thumbs_down;
-                            if (score > scoreThreshold)
+                            if (bestResult != null)
                             {
-                                return formatDefinition((string)bestResult.definition);
+                                var score = bestResult.thumbs_up - bestResult.thumbs_down;
+                                if (score > scoreThreshold)
+                                {
+                                    return formatDefinition((string)bestResult.definition);
+                                }
                             }
                         }
                     }
