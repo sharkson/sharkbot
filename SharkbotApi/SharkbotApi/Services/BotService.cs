@@ -127,11 +127,11 @@ namespace SharkbotApi.Services
             ChatResponse response;
             if ((chat.exclusiveTypes != null && chat.exclusiveTypes.Count > 0) || (chat.requiredProperyMatches != null && chat.requiredProperyMatches.Count > 0))
             {
-                response = responseService.GetResponse(analyzedConversation, chat.exclusiveTypes, chat.requiredProperyMatches);
+                response = responseService.GetResponse(analyzedConversation, chat.exclusiveTypes, chat.requiredProperyMatches, chat.excludedTypes);
             }
             else
             {
-                response = responseService.GetResponse(analyzedConversation);
+                response = responseService.GetResponse(analyzedConversation, chat.excludedTypes);
             }
             stopwatch.Stop();
             Debug.WriteLine("GetResponse " + stopwatch.Elapsed);

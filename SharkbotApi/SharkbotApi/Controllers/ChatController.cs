@@ -24,11 +24,7 @@ namespace SharkbotApi.Controllers
         {
             if(requestValidationService.ValidRequest(chat))
             {
-                if(chat.requiredProperyMatches == null)
-                {
-                    chat.requiredProperyMatches = new List<string>();
-                }
-
+                chat = cleanRequest(chat);
                 var response = botService.GetResponse(chat);
                 response.metadata = chat.metadata;
                 return response;
@@ -40,6 +36,24 @@ namespace SharkbotApi.Controllers
                 metadata = chat.metadata;
             }
             return new ChatResponse { confidence = 0, response = new List<string>(), metadata = metadata };
+        }
+
+        private ChatRequest cleanRequest(ChatRequest chat)
+        {
+            if (chat.requiredProperyMatches == null)
+            {
+                chat.requiredProperyMatches = new List<string>();
+            }
+            if (chat.exclusiveTypes == null)
+            {
+                chat.exclusiveTypes = new List<string>();
+            }
+            if (chat.excludedTypes == null)
+            {
+                chat.excludedTypes = new List<string>();
+            }
+
+            return chat;
         }
     }
 }

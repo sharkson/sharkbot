@@ -14,19 +14,19 @@ namespace SharkbotReplier.Services
             matchService = new MatchService();
         }
 
-        public MatchChat GetConversationMatch(Conversation conversation)
+        public MatchChat GetConversationMatch(Conversation conversation, List<string> excludedTypes)
         {
-            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase;
+            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase.Where(cl => !excludedTypes.Any(t => cl.type == t)).ToList();
             var conversationMatchRequest = new ConversationMatchRequest { conversation = conversation, conversationLists = conversationLists };
             return matchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists);
         }
 
-        public MatchChat GetConversationMatch(Conversation conversation, List<string> types, List<string> requiredProperyMatches)
+        public MatchChat GetConversationMatch(Conversation conversation, List<string> requiredTypes, List<string> requiredProperyMatches, List<string> excludedTypes)
         {
-            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase;
-            if (types.Count > 0)
+            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase.Where(cl => !excludedTypes.Any(t => cl.type == t)).ToList();
+            if (requiredTypes.Count > 0)
             {
-                conversationLists = conversationLists.Where(cl => types.Any(t => cl.type == t)).ToList();
+                conversationLists = conversationLists.Where(cl => requiredTypes.Any(t => cl.type == t)).ToList();
             }
             
             if(requiredProperyMatches.Count > 0)

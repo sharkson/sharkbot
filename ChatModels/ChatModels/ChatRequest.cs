@@ -11,7 +11,8 @@ namespace ChatModels
         public string type { get; set; }
         public DateTime? requestTime { get; set; }
         public List<string> exclusiveTypes { get; set; }
-        public List<string> requiredProperyMatches { get; set; } //TODO: test if this is working
+        public List<string> excludedTypes { get; set; }
+        public List<string> requiredProperyMatches { get; set; }
         public dynamic metadata { get; set; }
     }
 }
