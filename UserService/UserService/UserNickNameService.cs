@@ -9,7 +9,7 @@ namespace UserService
     {
         private List<string> nameSearch = new List<string>() { "call me (\\p{L}*)", "my name is (\\p{L}*)" };
         private List<string> excludeNameSearch = new List<string>() { "don't call me", "not call me", "never call me", " is not " };
-
+        //TODO: determine if someone else is calling someone by a nickname.  If there is a proper noun and it is similar to their username, for example username sharknice and being called sharkie  4 consecutive letters match
         public string GetNickName(AnalyzedChat analyzedChat)
         {
             if (!excludeNameSearch.Any(e => analyzedChat.chat.message.ToLower().Contains(e)))
