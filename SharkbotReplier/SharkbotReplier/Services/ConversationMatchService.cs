@@ -7,18 +7,18 @@ namespace SharkbotReplier.Services
 {
     public class ConversationMatchService
     {
-        private MatchService matchService;
+        private BestMatchService bestMatchService;
 
         public ConversationMatchService()
         {
-            matchService = new MatchService();
+            bestMatchService = new BestMatchService();
         }
 
         public MatchChat GetConversationMatch(Conversation conversation, List<string> excludedTypes)
         {
             var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase.Where(cl => !excludedTypes.Any(t => cl.type == t)).ToList();
             var conversationMatchRequest = new ConversationMatchRequest { conversation = conversation, conversationLists = conversationLists };
-            return matchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists);
+            return bestMatchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists);
         }
 
         public MatchChat GetConversationMatch(Conversation conversation, List<string> requiredTypes, List<string> requiredProperyMatches, List<string> excludedTypes)
@@ -38,16 +38,11 @@ namespace SharkbotReplier.Services
                     var matchingUsers = UserDatabase.UserDatabase.userDatabase.Where(user => propertiesToMatch.All(ptm => user.derivedProperties.Any(dp => dp.name == ptm.name && dp.value == ptm.value))).ToList();
 
                     var matchRequest = new ConversationMatchRequest { conversation = conversation, conversationLists = conversationLists };
-                    return matchService.GetBestMatch(matchRequest.conversation, matchRequest.conversationLists, matchingUsers);
+                    return bestMatchService.GetBestMatch(matchRequest.conversation, matchRequest.conversationLists, matchingUsers);
                 }             
             }
             var conversationMatchRequest = new ConversationMatchRequest { conversation = conversation, conversationLists = conversationLists };
-            return matchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists);
-        }
-
-        public static bool ContainsAll<T>(IEnumerable<T> source, IEnumerable<T> values)
-        {
-            return values.All(value => source.Contains(value));
+            return bestMatchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists);
         }
     }
 }

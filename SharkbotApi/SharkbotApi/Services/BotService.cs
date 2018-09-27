@@ -4,7 +4,6 @@ using ConversationDatabase.Services;
 using SharkbotApi.Models;
 using SharkbotReplier.Services;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -101,29 +100,14 @@ namespace SharkbotApi.Services
 
         private ChatResponse ProcessChat(ChatRequest chat)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
             var conversation = conversationService.GetConversation(chat);
-            stopwatch.Stop();
-            Debug.WriteLine("GetConversation " + stopwatch.Elapsed);
-
-            stopwatch.Start();
             var analyzedConversation = analyzationService.AnalyzeConversation(conversation);
-            stopwatch.Stop();
-            Debug.WriteLine("AnalyzeConversation " + stopwatch.Elapsed);
+            var inResponseTo = analyzedConversation.responses.LastOrDefault();
 
-            stopwatch.Start();
             var conversationUdpdated = covnersationUpdateService.UpdateConversation(analyzedConversation, chat.type);
-            stopwatch.Stop();
-            Debug.WriteLine("UpdateConversation " + stopwatch.Elapsed);
 
-            stopwatch.Start();
-            userService.UpdateUsers(analyzedConversation.responses.Last());
-            stopwatch.Stop();
-            Debug.WriteLine("UpdateUser " + stopwatch.Elapsed);
+            userService.UpdateUsers(analyzedConversation.responses.Last(), inResponseTo);
 
-            stopwatch.Start();
             ChatResponse response;
             if ((chat.exclusiveTypes != null && chat.exclusiveTypes.Count > 0) || (chat.requiredProperyMatches != null && chat.requiredProperyMatches.Count > 0))
             {
@@ -133,8 +117,6 @@ namespace SharkbotApi.Services
             {
                 response = responseService.GetResponse(analyzedConversation, chat.excludedTypes);
             }
-            stopwatch.Stop();
-            Debug.WriteLine("GetResponse " + stopwatch.Elapsed);
 
             return response;
         }
@@ -142,9 +124,10 @@ namespace SharkbotApi.Services
         private bool UpdateDatabases(ChatRequest chat)
         {
             var conversation = conversationService.GetConversation(chat);
+            var inResponseTo = conversation.responses.LastOrDefault();
             var analyzedConversation = analyzationService.AnalyzeConversation(conversation);
             var conversationUdpdated = covnersationUpdateService.UpdateConversation(analyzedConversation, chat.type);
-            userService.UpdateUsers(analyzedConversation.responses.Last());
+            userService.UpdateUsers(analyzedConversation.responses.Last(), inResponseTo);
 
             return conversationUdpdated;
         }
@@ -160,9 +143,11 @@ namespace SharkbotApi.Services
             var analyzedConversation = analyzationService.AnalyzeConversation(conversation);
             var conversationUdpdated = covnersationUpdateService.UpdateConversation(analyzedConversation, conversationRequest.type);
 
+            AnalyzedChat previousChat = null;
             foreach(var analyziedChat in analyzedConversation.responses)
             {
-                userService.UpdateUsers(analyziedChat);
+                userService.UpdateUsers(analyziedChat, previousChat);
+                previousChat = analyziedChat;
             }
 
             return conversationUdpdated;

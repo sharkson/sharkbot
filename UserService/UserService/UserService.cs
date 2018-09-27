@@ -7,6 +7,7 @@ namespace UserService
     {
         private UserNickNameService userNickNameService;
         private UserPropertyService userPropertyService;
+        private OtherUserPropertyService otherUserPropertyService;
         private UserDerivedPropertyService userDerivedPropertyService;
         private UserSaveService userSaveService;
 
@@ -14,18 +15,19 @@ namespace UserService
         {
             userNickNameService = new UserNickNameService();
             userPropertyService = new UserPropertyService();
+            otherUserPropertyService = new OtherUserPropertyService();
             userDerivedPropertyService = new UserDerivedPropertyService();
             userSaveService = new UserSaveService();
         }
 
-        public void UpdateUsers(AnalyzedChat analyzedChat)
+        public void UpdateUsers(AnalyzedChat userResponse, AnalyzedChat question)
         {
             var usersData = UserDatabase.UserDatabase.userDatabase;
 
-            var nickName = userNickNameService.GetNickName(analyzedChat);
-            var property = userPropertyService.GetProperty(analyzedChat);
+            var nickName = userNickNameService.GetNickName(userResponse, question);
+            var property = userPropertyService.GetProperty(userResponse, question);
 
-            var index = usersData.FindIndex(ud => ud != null && ud.userName != null && ud.userName == analyzedChat.chat.user);
+            var index = usersData.FindIndex(ud => ud != null && ud.userName != null && ud.userName == userResponse.chat.user);
             if (index >= 0)
             {
                 if (!string.IsNullOrEmpty(nickName))
@@ -39,15 +41,15 @@ namespace UserService
                 {
                     usersData[index].properties.Add(property);
                 }
-                usersData[index].derivedProperties.AddRange(userDerivedPropertyService.GetDerivedProperties(analyzedChat, property, usersData[index]));
+                usersData[index].derivedProperties.AddRange(userDerivedPropertyService.GetDerivedProperties(userResponse, property, usersData[index]));
 
                 userSaveService.SaveUserData(usersData[index]);
             }
             else
             {
-                if (!string.IsNullOrWhiteSpace(analyzedChat.chat.user))
+                if (!string.IsNullOrWhiteSpace(userResponse.chat.user))
                 {
-                    var userData = new UserData(analyzedChat.chat.user);
+                    var userData = new UserData(userResponse.chat.user);
                     if (!string.IsNullOrEmpty(nickName))
                     {
                         if (!userData.nickNames.Contains(nickName))
@@ -55,14 +57,14 @@ namespace UserService
                             userData.nickNames.Add(nickName);
                         }
                     }
-                    userData.derivedProperties.AddRange(userDerivedPropertyService.GetDerivedProperties(analyzedChat, property, userData));
+                    userData.derivedProperties.AddRange(userDerivedPropertyService.GetDerivedProperties(userResponse, property, userData));
 
                     usersData.Add(userData);
                     userSaveService.SaveUserData(userData);
                 }
             }
 
-            var otherUserProperty = userPropertyService.GetOtherUserProperty(analyzedChat, usersData);
+            var otherUserProperty = otherUserPropertyService.GetOtherUserProperty(userResponse, usersData);
             index = usersData.FindIndex(ud => ud != null && ud.userName != null && ud.userName == otherUserProperty.userName);
             if (index == -1)
             {

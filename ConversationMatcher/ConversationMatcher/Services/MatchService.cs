@@ -10,9 +10,6 @@ namespace ConversationMatcher.Services
     public class MatchService
     {
         private SubjectConfidenceService subjectConfidenceService;
-        private TripletScoreService tripletScoreService;
-        private TokenScoreService tokenScoreService;
-        private InterogativeScoreService interogativeScoreService;
         private ScoreService scoreService;
         private MatchConfidenceService matchConfidenceService;
         private GroupChatConfidenceService groupChatConfidenceService;
@@ -22,9 +19,6 @@ namespace ConversationMatcher.Services
         public MatchService()
         {
             subjectConfidenceService = new SubjectConfidenceService();
-            tripletScoreService = new TripletScoreService();
-            tokenScoreService = new TokenScoreService();
-            interogativeScoreService = new InterogativeScoreService();
             scoreService = new ScoreService();
             matchConfidenceService = new MatchConfidenceService();
             groupChatConfidenceService = new GroupChatConfidenceService();
@@ -32,61 +26,7 @@ namespace ConversationMatcher.Services
             readingLevelConfidenceService = new ReadingLevelConfidenceService();
         }
 
-        public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists)
-        {
-            var bestMatch = new MatchChat { matchConfidence = 0 };
-
-            var conversationMatchLists = GetConversationMatchLists(targetConversation, conversationLists);
-            foreach (var conversationMatchList in conversationMatchLists)
-            {
-                foreach (var conversation in conversationMatchList.matchConversations)
-                {
-                    for (var index = 0; index < conversation.responses.Count; index++)
-                    {
-                        if (conversation.responses[index].matchConfidence > bestMatch.matchConfidence)
-                        {
-                            bestMatch.matchConfidence = conversation.responses[index].matchConfidence;
-                            bestMatch.analyzedChat = conversation.responses[index].analyzedChat;
-                            if (index + 1 < conversation.responses.Count)
-                            {
-                                bestMatch.responseChat = GetResponseChat(conversation.responses, index);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return bestMatch;
-        }
-
-        public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists, List<UserData> matchingUsers)
-        {
-            var bestMatch = new MatchChat { matchConfidence = 0 };
-
-            var conversationMatchLists = GetConversationMatchLists(targetConversation, conversationLists);
-            foreach (var conversationMatchList in conversationMatchLists)
-            {
-                foreach (var conversation in conversationMatchList.matchConversations)
-                {
-                    for (var index = 0; index < conversation.responses.Count; index++)
-                    {
-                        if (conversation.responses[index].matchConfidence > bestMatch.matchConfidence && matchingUsers.Any(user => user.userName == conversation.responses[index].analyzedChat.chat.user))
-                        {
-                            bestMatch.matchConfidence = conversation.responses[index].matchConfidence;
-                            bestMatch.analyzedChat = conversation.responses[index].analyzedChat;
-                            if (index + 1 < conversation.responses.Count)
-                            {
-                                bestMatch.responseChat = GetResponseChat(conversation.responses, index);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return bestMatch;
-        }
-
-        private List<AnalyzedChat> GetResponseChat(List<MatchChat> conversation, int targetIndex)
+        public List<AnalyzedChat> GetResponseChat(List<MatchChat> conversation, int targetIndex)
         {
             var response = new List<AnalyzedChat>();
 
@@ -116,7 +56,7 @@ namespace ConversationMatcher.Services
             return chat.user == reply.user && chat.time + maximumReplyTime > reply.time;
         }
 
-        private List<ConversationMatchList> GetConversationMatchLists(Conversation targetConversation, List<ConversationList> conversationLists)
+        public List<ConversationMatchList> GetConversationMatchLists(Conversation targetConversation, List<ConversationList> conversationLists)
         {
             var conversationMatchLists = new List<ConversationMatchList>();
 

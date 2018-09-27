@@ -17,7 +17,7 @@ namespace SharkbotApi.Services
 
             foreach(var response in conversation.responses)
             {
-                if (string.IsNullOrWhiteSpace(response.chat.message) || string.IsNullOrWhiteSpace(response.chat.user))
+                if (response?.chat == null || string.IsNullOrWhiteSpace(response.chat.message) || string.IsNullOrWhiteSpace(response.chat.user))
                 {
                     return false;
                 }

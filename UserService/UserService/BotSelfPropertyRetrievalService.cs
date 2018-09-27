@@ -6,10 +6,13 @@ namespace UserService
 {
     public class BotSelfPropertyRetrievalService
     {
-        private UserPropertyService userPropertyService;
+        private PropertyValueService propertyValueService;
+        private UserNaturalLanguageService userNaturalLanguageService;
+
         public BotSelfPropertyRetrievalService()
         {
-            userPropertyService = new UserPropertyService();
+            propertyValueService = new PropertyValueService();
+            userNaturalLanguageService = new UserNaturalLanguageService();
         }
 
         public ChatResponse GetPropertyResponse(AnalyzedChat analyzedChat, UserData userData)
@@ -17,7 +20,7 @@ namespace UserService
             var requestedPropertyName = getRequestedProperty(analyzedChat);
             if (!string.IsNullOrEmpty(requestedPropertyName))
             {
-                var requestedProperty = userPropertyService.getSelfPropertyByValue(requestedPropertyName, userData);
+                var requestedProperty = propertyValueService.getSelfPropertyByValue(requestedPropertyName, userData);
                 if (!string.IsNullOrEmpty(requestedProperty.value))
                 {
                     var confidence = 1.0;
@@ -39,7 +42,7 @@ namespace UserService
             foreach (var regex in propertySearch)
             {
                 var match = getPropertyMatch(analyzedChat.chat.message, regex);
-                if (!string.IsNullOrWhiteSpace(match) && userPropertyService.isNaturalLanguageSelfProperty(analyzedChat, match))
+                if (!string.IsNullOrWhiteSpace(match) && userNaturalLanguageService.isNaturalLanguageSelfProperty(analyzedChat, match))
                 {
                     return match;
                 }

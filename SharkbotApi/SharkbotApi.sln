@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserService", "..\UserServi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextStatistics.Net", "..\TextStatistics.Net\TextStatistics.Net\TextStatistics.Net.csproj", "{C67A0A75-24C7-4C87-B51C-C5D99B979717}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConversationSteerService", "ConversationSteerService\ConversationSteerService.csproj", "{FC652E6F-0ACE-4E48-ACCA-62E16BA32873}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{C67A0A75-24C7-4C87-B51C-C5D99B979717}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C67A0A75-24C7-4C87-B51C-C5D99B979717}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C67A0A75-24C7-4C87-B51C-C5D99B979717}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC652E6F-0ACE-4E48-ACCA-62E16BA32873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC652E6F-0ACE-4E48-ACCA-62E16BA32873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC652E6F-0ACE-4E48-ACCA-62E16BA32873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC652E6F-0ACE-4E48-ACCA-62E16BA32873}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

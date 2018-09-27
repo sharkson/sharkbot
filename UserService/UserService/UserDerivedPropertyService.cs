@@ -10,16 +10,15 @@ namespace UserService
         {
             var properties = new List<UserProperty>();
 
-            properties.AddRange(getSex(analyzedChat, givenProperty, userData)); //TODO: add more of these, address, etc.
-            //TODO: derive based on the message that was replied to, etc.  person1: Are you a man or a woman.  person2: man
-            //TODO: sex based on name
+            properties.AddRange(getSex(analyzedChat, givenProperty, userData));
+            //TODO: add more of these, address, age (note time it was retrieved and factor that into response), derive from asl, etc.
+            //TODO: use machine learning to determine sex and other properties, train on conversations with known males and females or known specific property versus know doesn't have property
 
             return properties;
         }
         
         private List<string> sexMale = new List<string>() { "male", "boy", "man", "chap", "dude" };
         private List<string> sexFemale = new List<string>() { "female", "girl", "woman", "lady" };
-        //TODO: use machine learning to determine sex, train on conversations with known males and females
         private List<string> sexMaleMatch = new List<string>() { "i have a penis", "i have a dick", "my penis", "my dick", "my cock" };
         private List<string> sexFemaleMatch = new List<string>() { "i have a vagina", "i have boobs", "my vagina", "my boobs", "my tit", "my cunt", "my pussy" }; //TODO: create regex for matching 2 lists, "I have", "my" then "vagina", "boobs"
         private List<UserProperty> getSex(AnalyzedChat analyzedChat, UserProperty givenProperty, UserData userData)
