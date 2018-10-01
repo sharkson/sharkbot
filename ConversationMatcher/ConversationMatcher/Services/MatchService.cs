@@ -1,4 +1,5 @@
 ﻿using ChatModels;
+using ConversationSteerService;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace ConversationMatcher.Services
         private GroupChatConfidenceService groupChatConfidenceService;
         private UniqueConfidenceService uniqueConfidenceService;
         private ReadingLevelConfidenceService readingLevelConfidenceService;
+        private ConversationPathService conversationPathService;
 
         public MatchService()
         {
@@ -24,9 +26,10 @@ namespace ConversationMatcher.Services
             groupChatConfidenceService = new GroupChatConfidenceService();
             uniqueConfidenceService = new UniqueConfidenceService();
             readingLevelConfidenceService = new ReadingLevelConfidenceService();
+            conversationPathService = new ConversationPathService();
         }
 
-        public List<AnalyzedChat> GetResponseChat(List<MatchChat> conversation, int targetIndex)
+        public List<AnalyzedChat> GetResponseChat(List<MatchChat> conversation, int targetIndex) //TODO: pre-calculation this as part of the naturalLanguageData
         {
             var response = new List<AnalyzedChat>();
 
@@ -56,8 +59,21 @@ namespace ConversationMatcher.Services
             return chat.user == reply.user && chat.time + maximumReplyTime > reply.time;
         }
 
-        public List<ConversationMatchList> GetConversationMatchLists(Conversation targetConversation, List<ConversationList> conversationLists)
+        private List<string> getPathSubjects(Conversation targetConversation, List<ConversationList> conversationLists, List<string> subjectGoals)
         {
+            var subjectStarts = new List<string>();
+            var nld = targetConversation.responses.Last().naturalLanguageData;
+            foreach (var subject in nld.subjects)
+            {
+                subjectStarts.AddRange(subject.subjectWords);
+            }
+            return conversationPathService.GetPathsSubjects(subjectGoals, subjectStarts, conversationLists);
+        }
+
+        public List<ConversationMatchList> GetConversationMatchLists(Conversation targetConversation, List<ConversationList> conversationLists, List<string> subjectGoals)
+        {
+            var pathSubjects = getPathSubjects(targetConversation, conversationLists, subjectGoals);
+
             var conversationMatchLists = new List<ConversationMatchList>();
 
             foreach (var conversationList in conversationLists)
@@ -77,8 +93,6 @@ namespace ConversationMatcher.Services
                         var subjectMatchConfidence = subjectConfidenceService.getSubjectMatchConfidence(targetConversation, conversation);
                         var readingLevelMatchConfidence = readingLevelConfidenceService.getReadingLevelConfidence(targetConversation.readingLevel, conversation.readingLevel);
 
-                        var responseUsers = conversation.responses.Select(r => r.chat.user).Distinct().ToList();
-                        var targetUsers = targetConversation.responses.Select(r => r.chat.user).Distinct().ToList();
                         for(var index = 0; index < conversation.responses.Count(); index++)
                         {
                             var userlessReply = string.Empty;
@@ -86,7 +100,7 @@ namespace ConversationMatcher.Services
                             {
                                 userlessReply = conversation.responses[index + 1].naturalLanguageData.userlessMessage;
                             }
-                            var matchChat = GetMatch(targetConversation, conversation.responses[index], subjectMatchConfidence, readingLevelMatchConfidence, conversation.groupChat, userlessReply);
+                            var matchChat = GetMatch(targetConversation, conversation.responses[index], subjectMatchConfidence, readingLevelMatchConfidence, conversation.groupChat, userlessReply, pathSubjects);
                             matchConversation.responses.Add(matchChat);
                         }
 
@@ -106,9 +120,8 @@ namespace ConversationMatcher.Services
         private const double readingLevelMatchRatio = .05;
         private const double groupChatRatio = .05;
 
-        private MatchChat GetMatch(Conversation targetConversation, AnalyzedChat existingResponse, double subjectMatchConfidence, double readingLevelMatchConfidence, bool existingGroupChat, string userlessReply)
+        private MatchChat GetMatch(Conversation targetConversation, AnalyzedChat existingResponse, double subjectMatchConfidence, double readingLevelMatchConfidence, bool existingGroupChat, string userlessReply, List<string> pathSubjects)
         {
-            //TODO: add the ability to pass in a required user property that the responding user has to have, or that the matching response has to have
             //TODO: add user comparison and user similarity to the algorithm for confidence
             var targetResponse = targetConversation.responses.Last();
 
@@ -118,7 +131,7 @@ namespace ConversationMatcher.Services
                 analyzedChat = existingResponse
             };
 
-            if(existingResponse.naturalLanguageData.responseConfidence == 0) //TODO: if the responding user name is in the excluded list set confidence to 0 and return
+            if(existingResponse.naturalLanguageData.responseConfidence == 0)
             {
                 return matchChat;
             }
@@ -149,9 +162,25 @@ namespace ConversationMatcher.Services
                 confidence = Math.Pow(confidence, exponent);
             }
 
+            var bonusConfidence = getBonusConfidence(existingResponse, pathSubjects);
+            confidence = confidence + bonusConfidence;
+
             matchChat.matchConfidence = confidence;
 
             return matchChat;
+        }
+
+        double goalBonus = .1;
+        private double getBonusConfidence(AnalyzedChat existingResponse, List<string> pathSubjects)
+        {
+            foreach(var conversationSubjects in existingResponse.naturalLanguageData.subjects)
+            {
+                if(conversationSubjects.subjectWords.Any(sw => pathSubjects.Contains(sw)))
+                {
+                    return goalBonus;
+                }
+            }
+            return 0;
         }
     }
 }

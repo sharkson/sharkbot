@@ -29,11 +29,11 @@ namespace SharkbotReplier.Services
             responseConversionService = new ResponseConversionService();
         }
 
-        public ChatResponse GetResponse(Conversation analyzedConversation, List<string> excludedTypes)
+        public ChatResponse GetResponse(Conversation analyzedConversation, List<string> excludedTypes, List<string> subjectGoals)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var conversationChatResponse = conversationMatchService.GetConversationMatch(analyzedConversation, excludedTypes);
+            var conversationChatResponse = conversationMatchService.GetConversationMatch(analyzedConversation, excludedTypes, subjectGoals);
             stopwatch.Stop();
             Debug.WriteLine("conversationChatResponse: " + stopwatch.Elapsed);
 
@@ -99,10 +99,10 @@ namespace SharkbotReplier.Services
             return chatResponse;
         }
 
-        public ChatResponse GetResponse(Conversation analyzedConversation, List<string> requiredTypes, List<string> requiredProperyMatches, List<string> excludedTypes)
+        public ChatResponse GetResponse(Conversation analyzedConversation, List<string> requiredTypes, List<string> requiredProperyMatches, List<string> excludedTypes, List<string> subjectGoals)
         {
             //TODO: change type to list of types, pass that in. if it's empty do any
-            var conversationChatResponse = conversationMatchService.GetConversationMatch(analyzedConversation, requiredTypes, requiredProperyMatches, excludedTypes);
+            var conversationChatResponse = conversationMatchService.GetConversationMatch(analyzedConversation, requiredTypes, requiredProperyMatches, excludedTypes, subjectGoals);
             var userPropertyChatResponse = userPropertyService.GetUserPropertyMatch(analyzedConversation);
 
             var matchChat = conversationChatResponse;

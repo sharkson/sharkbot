@@ -13,11 +13,11 @@ namespace ConversationMatcher.Services
             matchService = new MatchService();
         }
 
-        public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists)
+        public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists, List<string> subjectGoals)
         {
             var bestMatch = new MatchChat { matchConfidence = 0 };
 
-            var conversationMatchLists = matchService.GetConversationMatchLists(targetConversation, conversationLists);
+            var conversationMatchLists = matchService.GetConversationMatchLists(targetConversation, conversationLists, subjectGoals);
             foreach (var conversationMatchList in conversationMatchLists)
             {
                 foreach (var conversation in conversationMatchList.matchConversations)
@@ -40,11 +40,11 @@ namespace ConversationMatcher.Services
             return bestMatch;
         }
 
-        public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists, List<UserData> matchingUsers)
+        public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists, List<UserData> matchingUsers, List<string> subjectGoals)
         {
             var bestMatch = new MatchChat { matchConfidence = 0 };
 
-            var conversationMatchLists = matchService.GetConversationMatchLists(targetConversation, conversationLists);
+            var conversationMatchLists = matchService.GetConversationMatchLists(targetConversation, conversationLists, subjectGoals);
             foreach (var conversationMatchList in conversationMatchLists)
             {
                 foreach (var conversation in conversationMatchList.matchConversations)

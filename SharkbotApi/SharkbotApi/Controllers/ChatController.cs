@@ -52,6 +52,10 @@ namespace SharkbotApi.Controllers
             {
                 chat.excludedTypes = new List<string>();
             }
+            if(chat.subjectGoals == null)
+            {
+                chat.subjectGoals = new List<string>();
+            }
 
             return chat;
         }

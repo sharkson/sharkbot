@@ -13,6 +13,7 @@ namespace ChatModels
         public List<string> exclusiveTypes { get; set; }
         public List<string> excludedTypes { get; set; }
         public List<string> requiredProperyMatches { get; set; }
+        public List<string> subjectGoals { get; set; }
         public dynamic metadata { get; set; }
     }
 }

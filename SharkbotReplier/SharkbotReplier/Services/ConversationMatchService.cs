@@ -14,14 +14,14 @@ namespace SharkbotReplier.Services
             bestMatchService = new BestMatchService();
         }
 
-        public MatchChat GetConversationMatch(Conversation conversation, List<string> excludedTypes)
+        public MatchChat GetConversationMatch(Conversation conversation, List<string> excludedTypes, List<string> subjectGoals)
         {
             var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase.Where(cl => !excludedTypes.Any(t => cl.type == t)).ToList();
             var conversationMatchRequest = new ConversationMatchRequest { conversation = conversation, conversationLists = conversationLists };
-            return bestMatchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists);
+            return bestMatchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists, subjectGoals);
         }
 
-        public MatchChat GetConversationMatch(Conversation conversation, List<string> requiredTypes, List<string> requiredProperyMatches, List<string> excludedTypes)
+        public MatchChat GetConversationMatch(Conversation conversation, List<string> requiredTypes, List<string> requiredProperyMatches, List<string> excludedTypes, List<string> subjectGoals)
         {
             var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase.Where(cl => !excludedTypes.Any(t => cl.type == t)).ToList();
             if (requiredTypes.Count > 0)
@@ -38,11 +38,11 @@ namespace SharkbotReplier.Services
                     var matchingUsers = UserDatabase.UserDatabase.userDatabase.Where(user => propertiesToMatch.All(ptm => user.derivedProperties.Any(dp => dp.name == ptm.name && dp.value == ptm.value))).ToList();
 
                     var matchRequest = new ConversationMatchRequest { conversation = conversation, conversationLists = conversationLists };
-                    return bestMatchService.GetBestMatch(matchRequest.conversation, matchRequest.conversationLists, matchingUsers);
+                    return bestMatchService.GetBestMatch(matchRequest.conversation, matchRequest.conversationLists, matchingUsers, subjectGoals);
                 }             
             }
             var conversationMatchRequest = new ConversationMatchRequest { conversation = conversation, conversationLists = conversationLists };
-            return bestMatchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists);
+            return bestMatchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists, subjectGoals);
         }
     }
 }

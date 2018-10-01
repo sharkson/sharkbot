@@ -14,6 +14,7 @@ namespace ChatAnalyzer.Services
         private ConversationTypeService conversationTypeService;
         private UserlessMessageService userlessMessageService;
         private ConversationReadingLevelService conversationReadingLevelService;
+        private ResponseSubjectService responseSubjectService;
 
         public AnalyzationService()
         {
@@ -22,6 +23,7 @@ namespace ChatAnalyzer.Services
             conversationTypeService = new ConversationTypeService();
             userlessMessageService = new UserlessMessageService();
             conversationReadingLevelService = new ConversationReadingLevelService();
+            responseSubjectService = new ResponseSubjectService();
         }
 
         public Conversation AnalyzeConversation(Conversation conversation)
@@ -40,6 +42,7 @@ namespace ChatAnalyzer.Services
                 }
                 response.naturalLanguageData = NaturalLanguageService.NaturalLanguageService.AnalyzeMessage(response.chat);
                 response.naturalLanguageData.userlessMessage = userlessMessageService.GetMessageWithoutUsers(response.chat.message, users);
+                response.naturalLanguageData.subjects = responseSubjectService.GetSubjects(response);
             }
 
             conversation.groupChat = conversationTypeService.GetConversationGroupChatType(conversation.responses);
@@ -54,6 +57,7 @@ namespace ChatAnalyzer.Services
                     if (responseAnalyzationService.MessageHasUsableResponse(conversation.responses[index].chat, nextResponse.chat))
                     {
                         conversation.responses[index].naturalLanguageData.responseConfidence = responseAnalyzationService.getReplyConfidence(conversation.responses[index], nextResponse, UserDatabase.UserDatabase.userDatabase, conversation.groupChat);
+                        conversation.responses[index].naturalLanguageData.responseSubjects = nextResponse.naturalLanguageData.subjects;
                     }
                 }
 
