@@ -40,7 +40,7 @@ namespace ConversationMatcher.Services
             return bestMatch;
         }
 
-        public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists, List<UserData> matchingUsers, List<string> subjectGoals)
+        public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists, List<string> subjectGoals, List<UserData> matchingUsers, List<UserData> usersMatchingBot)
         {
             var bestMatch = new MatchChat { matchConfidence = 0 };
 
@@ -51,7 +51,7 @@ namespace ConversationMatcher.Services
                 {
                     for (var index = 0; index < conversation.responses.Count; index++)
                     {
-                        if (conversation.responses[index].matchConfidence > bestMatch.matchConfidence && matchingUsers.Any(user => user.userName == conversation.responses[index].analyzedChat.chat.user))
+                        if (conversation.responses[index].matchConfidence > bestMatch.matchConfidence && userMatch(conversation, index, matchingUsers) && userMatch(conversation, index + 1, usersMatchingBot))
                         {
                             bestMatch.matchConfidence = conversation.responses[index].matchConfidence;
                             bestMatch.analyzedChat = conversation.responses[index].analyzedChat;
@@ -65,6 +65,11 @@ namespace ConversationMatcher.Services
             }
 
             return bestMatch;
+        }
+
+        private bool userMatch(MatchConversation conversation, int index, List<UserData> matchingUsers)
+        {
+            return matchingUsers.Any(user => user.userName == conversation.responses[index].analyzedChat.chat.user);
         }
     }
 }

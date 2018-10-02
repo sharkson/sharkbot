@@ -102,10 +102,13 @@ namespace SharkbotApi.Services
         {
             var conversation = conversationService.GetConversation(chat);
             var analyzedConversation = analyzationService.AnalyzeConversation(conversation);
-            var inResponseTo = analyzedConversation.responses.LastOrDefault();
-
             var conversationUdpdated = covnersationUpdateService.UpdateConversation(analyzedConversation, chat.type);
 
+            AnalyzedChat inResponseTo = null;
+            if (analyzedConversation.responses.Count() > 1)
+            {
+                inResponseTo = analyzedConversation.responses[analyzedConversation.responses.Count() - 2];
+            }
             userService.UpdateUsers(analyzedConversation.responses.Last(), inResponseTo);
 
             ChatResponse response;
