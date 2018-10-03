@@ -33,7 +33,7 @@ namespace SharkbotReplier.Services
             {
                 var userData = UserDatabase.UserDatabase.userDatabase.Where(user => user.userName == conversation.responses.Last().chat.user && requiredProperyMatches.All(requiredProperty => user.derivedProperties.Any(dp => dp.name == requiredProperty))).FirstOrDefault();
                 var botData = UserDatabase.UserDatabase.userDatabase.Where(user => user.userName == conversation.responses.Last().chat.botName && requiredProperyMatches.All(requiredProperty => user.derivedProperties.Any(dp => dp.name == requiredProperty))).FirstOrDefault();
-                if (userData != null)
+                if (userData != null && botData != null)
                 {
                     var propertiesToMatch = userData.derivedProperties.Where(dp => requiredProperyMatches.Contains(dp.name));
                     var matchingUsers = UserDatabase.UserDatabase.userDatabase.Where(user => propertiesToMatch.All(ptm => user.derivedProperties.Any(dp => dp.name == ptm.name && dp.value == ptm.value))).ToList();
