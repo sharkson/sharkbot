@@ -8,6 +8,33 @@ namespace SharkbotApi.Services
 {
     public class ConversationService
     {
+        public Conversation GetConversation(string conversationName, string type)
+        {
+            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase;
+
+            var conversationList = conversationLists.Where(cl => cl.type == type).FirstOrDefault();
+            Conversation conversation = null;
+            if (conversationList != null)
+            {
+                var existingConversation = conversationList.conversations.Where(c => c.name == conversationName).FirstOrDefault();
+                if (existingConversation != null)
+                {
+                    conversation = DeepCopy(existingConversation);
+                }
+            }
+
+            if (conversation == null)
+            {
+                conversation = new Conversation
+                {
+                    name = conversationName,
+                    responses = new List<AnalyzedChat>()
+                };
+            }
+
+            return conversation;
+        }
+
         public Conversation GetConversation(ChatRequest chatRequest)
         {
             var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase;

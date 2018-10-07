@@ -4,6 +4,7 @@ using ConversationDatabase.Services;
 using SharkbotApi.Models;
 using SharkbotReplier.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +17,7 @@ namespace SharkbotApi.Services
         private ResponseService responseService;
         private ConversationUpdateService covnersationUpdateService;
         private UserService.UserService userService;
+        private UpdateDatabasesService updateDatabasesService;
 
         public BotService()
         {
@@ -24,6 +26,7 @@ namespace SharkbotApi.Services
             responseService = new ResponseService();
             covnersationUpdateService = new ConversationUpdateService();
             userService = new UserService.UserService();
+            updateDatabasesService = new UpdateDatabasesService();
         }
 
         public ChatResponse GetResponse(ChatRequest chat)
@@ -50,6 +53,31 @@ namespace SharkbotApi.Services
             return Task.Delay(1000).ContinueWith((task) => { return GetResponse(chat); }).Result;
         }
 
+        public ChatResponse GetResponse(ResponseRequest responseRequest)
+        {
+            if (responseRequest.requestTime == null)
+            {
+                responseRequest.requestTime = DateTime.Now;
+            }
+
+            var queueItem = new ConversationQueueItem { ConversationName = responseRequest.conversationName, RequestTime = (DateTime)responseRequest.requestTime };
+
+            if (!ConversationTracker.requestQueue.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
+            {
+                ConversationTracker.requestQueue.Enqueue(queueItem);
+            }
+
+            ConversationQueueItem peekedQueueItem;
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
+            {
+                var conversation = conversationService.GetConversation(responseRequest.conversationName, responseRequest.type);
+                var response = GetChatResponse(conversation, responseRequest.exclusiveTypes, responseRequest.requiredProperyMatches, responseRequest.excludedTypes, responseRequest.subjectGoals);
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                return response;
+            }
+            return Task.Delay(1000).ContinueWith((task) => { return GetResponse(responseRequest); }).Result;
+        }
+
         public bool UpdateConversation(ChatRequest chat)
         {
             if (chat.requestTime == null)
@@ -67,7 +95,7 @@ namespace SharkbotApi.Services
             ConversationQueueItem peekedQueueItem;
             if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
             {
-                var updated = UpdateDatabases(chat);
+                var updated = updateDatabasesService.UpdateDatabases(chat);
                 ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                 return updated;
             }
@@ -91,7 +119,7 @@ namespace SharkbotApi.Services
             ConversationQueueItem peekedQueueItem;
             if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
             {
-                var updated = UpdateDatabases(conversationRequest);
+                var updated = updateDatabasesService.UpdateDatabases(conversationRequest);
                 ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                 return updated;
             }
@@ -111,49 +139,22 @@ namespace SharkbotApi.Services
             }
             userService.UpdateUsers(analyzedConversation.responses.Last(), inResponseTo);
 
+            return GetChatResponse(conversation, chat.exclusiveTypes, chat.requiredProperyMatches, chat.excludedTypes, chat.subjectGoals);
+        }
+
+        private ChatResponse GetChatResponse(Conversation conversation, List<string> exclusiveTypes, List<string> requiredProperyMatches, List<string> excludedTypes, List<string> subjectGoals)
+        {
             ChatResponse response;
-            if ((chat.exclusiveTypes != null && chat.exclusiveTypes.Count > 0) || (chat.requiredProperyMatches != null && chat.requiredProperyMatches.Count > 0))
+            if ((exclusiveTypes != null && exclusiveTypes.Count > 0) || (requiredProperyMatches != null && requiredProperyMatches.Count > 0))
             {
-                response = responseService.GetResponse(analyzedConversation, chat.exclusiveTypes, chat.requiredProperyMatches, chat.excludedTypes, chat.subjectGoals);
+                response = responseService.GetResponse(conversation, exclusiveTypes, requiredProperyMatches, excludedTypes, subjectGoals);
             }
             else
             {
-                response = responseService.GetResponse(analyzedConversation, chat.excludedTypes, chat.subjectGoals);
+                response = responseService.GetResponse(conversation, excludedTypes, subjectGoals);
             }
 
             return response;
-        }
-
-        private bool UpdateDatabases(ChatRequest chat)
-        {
-            var conversation = conversationService.GetConversation(chat);
-            var inResponseTo = conversation.responses.LastOrDefault();
-            var analyzedConversation = analyzationService.AnalyzeConversation(conversation);
-            var conversationUdpdated = covnersationUpdateService.UpdateConversation(analyzedConversation, chat.type);
-            userService.UpdateUsers(analyzedConversation.responses.Last(), inResponseTo);
-
-            return conversationUdpdated;
-        }
-
-        private bool UpdateDatabases(ConversationRequest conversationRequest)
-        {
-            var conversation = new Conversation
-            {
-                name = conversationRequest.name,
-                responses = conversationRequest.responses
-            };
-
-            var analyzedConversation = analyzationService.AnalyzeConversation(conversation);
-            var conversationUdpdated = covnersationUpdateService.UpdateConversation(analyzedConversation, conversationRequest.type);
-
-            AnalyzedChat previousChat = null;
-            foreach(var analyziedChat in analyzedConversation.responses)
-            {
-                userService.UpdateUsers(analyziedChat, previousChat);
-                previousChat = analyziedChat;
-            }
-
-            return conversationUdpdated;
         }
     }
 }
