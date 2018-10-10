@@ -5,7 +5,6 @@ using SharkbotApi.Models;
 using SharkbotReplier.Services;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -48,10 +47,7 @@ namespace SharkbotApi.Services
             if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
             {
                 var response = ProcessChat(chat);
-                while(!ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem))
-                {
-                    Debug.WriteLine("dequeue failed");
-                }
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                 return response;
             }
             return Task.Delay(1000).ContinueWith((task) => { return GetResponse(chat); }).Result;
@@ -76,10 +72,7 @@ namespace SharkbotApi.Services
             {
                 var conversation = conversationService.GetConversation(responseRequest.conversationName, responseRequest.type);
                 var response = GetChatResponse(conversation, responseRequest.exclusiveTypes, responseRequest.requiredProperyMatches, responseRequest.excludedTypes, responseRequest.subjectGoals);
-                while (!ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem))
-                {
-                    Debug.WriteLine("dequeue failed");
-                }
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                 return response;
             }
             return Task.Delay(1000).ContinueWith((task) => { return GetResponse(responseRequest); }).Result;
@@ -103,10 +96,7 @@ namespace SharkbotApi.Services
             if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
             {
                 var updated = updateDatabasesService.UpdateDatabases(chat);
-                while (!ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem))
-                {
-                    Debug.WriteLine("dequeue failed");
-                }
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                 return updated;
             }
             return Task.Delay(1000).ContinueWith((task) => { return UpdateConversation(chat); }).Result;
@@ -130,10 +120,7 @@ namespace SharkbotApi.Services
             if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
             {
                 var updated = updateDatabasesService.UpdateDatabases(conversationRequest);
-                while (!ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem))
-                {
-                    Debug.WriteLine("dequeue failed");
-                }
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                 return updated;
             }
             return Task.Delay(1000).ContinueWith((task) => { return UpdateConversation(conversationRequest); }).Result;
