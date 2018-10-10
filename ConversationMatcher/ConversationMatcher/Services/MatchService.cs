@@ -62,10 +62,13 @@ namespace ConversationMatcher.Services
         private List<string> getPathSubjects(Conversation targetConversation, List<ConversationList> conversationLists, List<string> subjectGoals)
         {
             var subjectStarts = new List<string>();
-            var nld = targetConversation.responses.Last().naturalLanguageData;
-            foreach (var subject in nld.subjects)
+            if(targetConversation.responses.Count > 0)
             {
-                subjectStarts.AddRange(subject.subjectWords);
+                var nld = targetConversation.responses.Last().naturalLanguageData;
+                foreach (var subject in nld.subjects)
+                {
+                    subjectStarts.AddRange(subject.subjectWords);
+                }
             }
             return conversationPathService.GetPathsSubjects(subjectGoals, subjectStarts, conversationLists);
         }
