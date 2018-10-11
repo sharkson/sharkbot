@@ -85,7 +85,7 @@ namespace ConversationMatcher.Services
 
                 Parallel.ForEach(conversationList.conversations, (conversation) =>
                 {
-                    if (conversation.name != targetConversation.name)
+                    if (conversation.name != targetConversation.name && targetConversation.analyzationVersion != null)
                     {
                         var matchConversation = new MatchConversation
                         {
