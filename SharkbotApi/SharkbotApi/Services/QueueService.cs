@@ -29,7 +29,7 @@ namespace SharkbotApi.Services
                 responseRequest.requestTime = DateTime.Now;
             }
 
-            var queueItem = new ConversationQueueItem { ConversationName = responseRequest.conversationName, RequestTime = (DateTime)responseRequest.requestTime };
+            var queueItem = new ConversationQueueItem { ConversationName = responseRequest.conversationName, RequestTime = responseRequest.requestTime };
 
             if (!ConversationTracker.requestQueue.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
             {
@@ -57,7 +57,7 @@ namespace SharkbotApi.Services
                 chat.requestTime = DateTime.Now;
             }
 
-            var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = (DateTime)chat.requestTime };
+            var queueItem = new ConversationQueueItem { ConversationName = chat.conversationName, RequestTime = chat.requestTime };
 
             if (!ConversationTracker.requestQueue.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
             {
