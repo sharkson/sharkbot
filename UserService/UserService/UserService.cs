@@ -25,6 +25,7 @@ namespace UserService
             var usersData = UserDatabase.UserDatabase.userDatabase;
 
             var nickName = userNickNameService.GetNickName(userResponse, question);
+            //TODO: remove nickname ex. "don't call me XXX"
             var property = userPropertyService.GetProperty(userResponse, question);
 
             var index = usersData.FindIndex(ud => ud != null && ud.userName != null && ud.userName == userResponse.chat.user);

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using SharkbotApi.Services;
+using System;
 
 namespace SharkbotApi.Controllers
 {
@@ -9,12 +10,12 @@ namespace SharkbotApi.Controllers
     [EnableCors("AllowSpecificOrigin")]
     public class ChatUpdateController : Controller
     {
-        BotService botService;
+        QueueService queueService;
         ChatRequestValidationService requestValidationService;
 
         public ChatUpdateController()
         {
-            botService = new BotService();
+            queueService = new QueueService();
             requestValidationService = new ChatRequestValidationService();
         }
 
@@ -23,7 +24,8 @@ namespace SharkbotApi.Controllers
         {
             if (requestValidationService.ValidRequest(chat))
             {
-                return botService.UpdateConversation(chat);
+                chat.requestTime = DateTime.Now;
+                return queueService.UpdateConversation(chat);
             }
             return false;
         }

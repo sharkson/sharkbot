@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using SharkbotApi.Services;
+using System;
 using System.Collections.Generic;
 
 namespace SharkbotApi.Controllers
@@ -10,12 +11,12 @@ namespace SharkbotApi.Controllers
     [EnableCors("AllowSpecificOrigin")]
     public class ChatController : Controller
     {
-        BotService botService;
+        QueueService queueService;
         ChatRequestValidationService requestValidationService;
 
         public ChatController()
         {
-            botService = new BotService();
+            queueService = new QueueService();
             requestValidationService = new ChatRequestValidationService();
         }
 
@@ -25,9 +26,13 @@ namespace SharkbotApi.Controllers
             if(requestValidationService.ValidRequest(chat))
             {
                 chat = cleanRequest(chat);
-                var response = botService.GetResponse(chat);
-                response.metadata = chat.metadata;
-                return response;
+                if(queueService.UpdateConversation(chat))
+                {
+                    var responseRequest = getResponseRequest(chat);
+                    var response = queueService.GetResponse(responseRequest);
+                    response.metadata = chat.metadata;
+                    return response;
+                }
             }
 
             dynamic metadata = null;
@@ -57,7 +62,26 @@ namespace SharkbotApi.Controllers
                 chat.subjectGoals = new List<string>();
             }
 
+            chat.requestTime = DateTime.Now;
+
             return chat;
+        }
+
+        private ResponseRequest getResponseRequest(ChatRequest chat)
+        {
+            var responseRequest = new ResponseRequest
+            {
+                conversationName = chat.conversationName,
+                excludedTypes = chat.excludedTypes,
+                exclusiveTypes = chat.exclusiveTypes,
+                requiredProperyMatches = chat.requiredProperyMatches,
+                subjectGoals = chat.subjectGoals,
+                type = chat.type,
+
+                requestTime = DateTime.Now
+            };
+
+            return responseRequest;
         }
     }
 }
