@@ -1,6 +1,5 @@
 ﻿using ChatModels;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace SharkbotReplier.Services
@@ -31,34 +30,23 @@ namespace SharkbotReplier.Services
 
         public ChatResponse GetResponse(Conversation analyzedConversation, List<string> excludedTypes, List<string> subjectGoals)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            if (analyzedConversation.responses.Count == 0)
+            {
+                return new ChatResponse() { confidence = 0, response = new List<string>() };
+            }
+
             var conversationChatResponse = conversationMatchService.GetConversationMatch(analyzedConversation, excludedTypes, subjectGoals);
-            stopwatch.Stop();
-            Debug.WriteLine("conversationChatResponse: " + stopwatch.Elapsed);
-
-            stopwatch.Restart();
+ 
             var userPropertyChatResponse = userPropertyService.GetUserPropertyMatch(analyzedConversation);
-            stopwatch.Stop();
-            Debug.WriteLine("userPropertyChatResponse: " + stopwatch.Elapsed);
 
-            stopwatch.Restart();
             var lyricsChatResponse = lyricsService.GetLyricsMatch(analyzedConversation);
-            stopwatch.Stop();
-            Debug.WriteLine("lyricsChatResponse: " + stopwatch.Elapsed);
 
             //TODO: media comment match
             //if it's a youtube video look up comments on the video and use one, soundcloud comments, reddit post comments, if it's a tweet look up replies to the tweet, etc.
 
-            stopwatch.Restart();
             var googleChatResponse = googleService.GetGoogleMatch(analyzedConversation);
-            stopwatch.Stop();
-            Debug.WriteLine("googleChatResponse: " + stopwatch.Elapsed);
 
-            stopwatch.Restart();
             var urbanDictionaryChatResponse = urbanDictionaryService.GetUrbanDictionaryMatch(analyzedConversation);
-            stopwatch.Stop();
-            Debug.WriteLine("urbanDictionaryChatResponse: " + stopwatch.Elapsed);
 
             //TODO: run all matches simultaneously then decide which one to use
 
@@ -88,13 +76,13 @@ namespace SharkbotReplier.Services
 
             var response = responseConversionService.ConvertResponse(analyzedConversation.responses.Last(), matchChat);
 
+            //TODO: alter reply to match sophistication
+
             var chatResponse = new ChatResponse
             {
                 confidence = matchChat.matchConfidence,
                 response = salutationService.GetProperlyAddressedResponse(analyzedConversation, response)
             };
-
-            //TODO: alter reply to match sophistication
 
             return chatResponse;
         }

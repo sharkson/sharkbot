@@ -1,7 +1,6 @@
 ﻿using ChatModels;
 using SharkbotApi.Models;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +12,8 @@ namespace SharkbotApi.Services
         ConversationService conversationService;
         private UpdateDatabasesService updateDatabasesService;
 
-        int queueDelay = 1000;
+        int queueDelay = 500;
+        int maximumDelay = 10000;
 
         public QueueService()
         {
@@ -37,15 +37,21 @@ namespace SharkbotApi.Services
             }
 
             ConversationQueueItem peekedQueueItem;
-            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem))
             {
-                var conversation = conversationService.GetConversation(responseRequest.conversationName, responseRequest.type);
-                var response = botService.GetChatResponse(conversation, responseRequest.exclusiveTypes, responseRequest.requiredProperyMatches, responseRequest.excludedTypes, responseRequest.subjectGoals);
-                while (!ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem))
+                if (peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
                 {
-                    Debug.WriteLine("dequeue failed");
+                    var conversation = conversationService.GetConversation(responseRequest.conversationName, responseRequest.type);
+                    var response = botService.GetChatResponse(conversation, responseRequest.exclusiveTypes, responseRequest.requiredProperyMatches, responseRequest.excludedTypes, responseRequest.subjectGoals);
+                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+
+                    return response;
                 }
-                return response;
+                else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
+                {
+                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                }
+
             }
             return Task.Delay(queueDelay).ContinueWith((task) => { return GetResponse(responseRequest); }).Result;
         }
@@ -65,14 +71,19 @@ namespace SharkbotApi.Services
             }
 
             ConversationQueueItem peekedQueueItem;
-            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem))
             {
-                var updated = updateDatabasesService.UpdateDatabases(chat);
-                while (!ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem))
+                if (peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
                 {
-                    Debug.WriteLine("dequeue failed");
+                    var updated = updateDatabasesService.UpdateDatabases(chat);
+                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+
+                    return updated;
                 }
-                return updated;
+            }
+            else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
+            {
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
             }
             return Task.Delay(queueDelay).ContinueWith((task) => { return UpdateConversation(chat); }).Result;
         }
@@ -92,14 +103,18 @@ namespace SharkbotApi.Services
             }
 
             ConversationQueueItem peekedQueueItem;
-            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem) && peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem))
             {
-                var updated = updateDatabasesService.UpdateDatabases(conversationRequest);
-                while (!ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem))
+                if (peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
                 {
-                    Debug.WriteLine("dequeue failed");
+                    var updated = updateDatabasesService.UpdateDatabases(conversationRequest);
+                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                    return updated;
                 }
-                return updated;
+            }
+            else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
+            {
+                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
             }
             return Task.Delay(queueDelay).ContinueWith((task) => { return UpdateConversation(conversationRequest); }).Result;
         }
