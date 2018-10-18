@@ -25,6 +25,11 @@ namespace ConversationSteerService
             var pathSubjects = new List<string>();
             pathSubjects.AddRange(goals);
 
+            if(goals.Count == 0 || starts.Count == 0)
+            {
+                return pathSubjects;
+            }
+
             foreach (var start in starts) //TODO: parallelize for performance maybe
             {
                 var vertices = verticeService.getVertices(conversationLists);
