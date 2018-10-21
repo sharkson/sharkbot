@@ -6,6 +6,7 @@ namespace SharkbotReplier.Services
 {
     public class ResponseConversionService
     {
+        //TODO: make sure what's being said isn't a property conflict ex. "I have blue eyes." when the bot has a property of green eyes
         public List<string> ConvertResponse(AnalyzedChat target, MatchChat match)
         {
             var responses = new List<string>();

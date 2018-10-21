@@ -12,9 +12,16 @@ namespace SharkbotReplier.Services
 
             if(responses.Count > 0)
             {
-                if (analyzedChat.chat.message.Contains("@" + analyzedChat.botName) && !responses[0].Contains(analyzedChat.chat.user))
+                if (analyzedChat.chat.message.Contains("@" + analyzedChat.botName) && !responses[0].Contains(analyzedChat.chat.user)) //TODO: check nicknames
                 {
-                    responses[0] = "@" + analyzedChat.chat.user + " " + responses[0];
+                    if(responses[0].StartsWith("/me") || responses[0].StartsWith("*"))
+                    {
+                        responses[0] = responses[0] + " @" + analyzedChat.chat.user;
+                    }
+                    else
+                    {
+                        responses[0] = "@" + analyzedChat.chat.user + " " + responses[0];
+                    }
                 }
                 else if (analyzedChat.chat.message.Contains(analyzedChat.botName) && !responses[0].Contains(analyzedChat.chat.user))
                 {
@@ -24,7 +31,14 @@ namespace SharkbotReplier.Services
                     {
                         nickName = userData.nickNames.Last();
                     }
-                    responses[0] = nickName + " " + responses[0];
+                    if (responses[0].StartsWith("/me") || responses[0].StartsWith("*"))
+                    {
+                        responses[0] = responses[0] + " " + nickName;
+                    }
+                    else
+                    {
+                        responses[0] = nickName + " " + responses[0];
+                    }   
                 }
             }
             

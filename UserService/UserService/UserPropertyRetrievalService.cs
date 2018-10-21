@@ -91,6 +91,7 @@ namespace UserService
             return userSelfPropertyRetrievalService.GetOtherPropertyResponse(analyzedChat, users);
         }
 
+        //TODO: who is * //search nicknames and give username.  * is @username, if say name instead of nickname say some properties of that user, check if user is in property of another user
         private List<string> otherPropertySearch = new List<string>() { "is (\\p{L}*)'s (\\p{L}*)", "are (\\p{L}*)'s (\\p{L}*)" };
         private UserNameAndProperty getOtherRequestedPropertyName(AnalyzedChat analyzedChat, List<UserData> users)
         {

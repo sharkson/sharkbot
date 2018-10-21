@@ -125,7 +125,7 @@ namespace ConversationMatcher.Services
 
         private MatchChat GetMatch(Conversation targetConversation, AnalyzedChat existingResponse, double subjectMatchConfidence, double readingLevelMatchConfidence, bool existingGroupChat, string userlessReply, List<string> pathSubjects)
         {
-            //TODO: add user comparison and user similarity to the algorithm for confidence
+            //TODO: add user comparison and user similarity to the algorithm for confidence, if user has same property as bot, etc.
             var targetResponse = targetConversation.responses.Last();
 
             var matchChat = new MatchChat
