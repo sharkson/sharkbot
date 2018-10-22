@@ -51,7 +51,6 @@ namespace SharkbotApi.Services
                 {
                     ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                 }
-
             }
             return Task.Delay(queueDelay).ContinueWith((task) => { return GetResponse(responseRequest); }).Result;
         }
@@ -80,11 +79,12 @@ namespace SharkbotApi.Services
 
                     return updated;
                 }
+                else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
+                {
+                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                }
             }
-            else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
-            {
-                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
-            }
+
             return Task.Delay(queueDelay).ContinueWith((task) => { return UpdateConversation(chat); }).Result;
         }
 
@@ -111,11 +111,12 @@ namespace SharkbotApi.Services
                     ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                     return updated;
                 }
+                else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
+                {
+                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                }
             }
-            else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
-            {
-                ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
-            }
+
             return Task.Delay(queueDelay).ContinueWith((task) => { return UpdateConversation(conversationRequest); }).Result;
         }
     }
