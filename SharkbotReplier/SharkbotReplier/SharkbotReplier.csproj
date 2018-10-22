@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ScrapySharp" Version="2.6.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\ChatModels\ChatModels\ChatModels.csproj" />
     <ProjectReference Include="..\..\ConversationDatabase\ConversationDatabase\ConversationDatabase.csproj" />
     <ProjectReference Include="..\..\ConversationMatcher\ConversationMatcher\ConversationMatcher.csproj" />

@@ -11,7 +11,7 @@ namespace GoogleMatchService
     public class GoogleMatchService
     {
         private ScrapingBrowser browser;
-        private const string searchUrl = "https://www.google.com/search?q=";
+        private const string searchUrl = "http://www.google.com/search?q=";
         private const double googleConfidence = .9;
 
         public GoogleMatchService()
@@ -43,28 +43,36 @@ namespace GoogleMatchService
                 var searchResult = browser.NavigateToPage(new Uri(searchUrl + searchString));
 
                 var definition = CleanResult(GetDefinition(searchResult));
-                var time = CleanResult(GetTime(searchResult));
-                var death = CleanResult(GetDeath(searchResult));
-                var longDescription = CleanResult(GetLongDescription(searchResult));
-
                 if (!string.IsNullOrWhiteSpace(definition))
                 {
                     return definition;
                 }
-                else if (!string.IsNullOrWhiteSpace(time))
+
+                var time = CleanResult(GetTime(searchResult));
+                if (!string.IsNullOrWhiteSpace(time))
                 {
                     return time;
                 }
-                else if (!string.IsNullOrWhiteSpace(death))
+
+                var death = CleanResult(GetDeath(searchResult));
+                if (!string.IsNullOrWhiteSpace(death))
                 {
                     return death;
                 }
-                else if (!string.IsNullOrWhiteSpace(longDescription))
+
+                var longDescription = CleanResult(GetLongDescription(searchResult));
+                if (!string.IsNullOrWhiteSpace(longDescription))
                 {
                     return longDescription;
                 }
+
+                var calculation = CleanResult(GetCalculation(searchResult));
+                if (!string.IsNullOrWhiteSpace(calculation))
+                {
+                    return calculation;
+                }
             }
-            catch (AggregateException)
+            catch (AggregateException exception)
             {
             }
             return string.Empty;
@@ -108,6 +116,16 @@ namespace GoogleMatchService
         private string GetLongDescription(WebPage searchResult)
         {
             var answer = searchResult.Html.CssSelect(".Y0NH2b.CLPzrc");
+            if (answer.Count() > 0 && !string.IsNullOrWhiteSpace(answer.First().InnerText))
+            {
+                return answer.First().InnerText;
+            }
+            return string.Empty;
+        }
+
+        private string GetCalculation(WebPage searchResult)
+        {
+            var answer = searchResult.Html.CssSelect("#cwos");
             if (answer.Count() > 0 && !string.IsNullOrWhiteSpace(answer.First().InnerText))
             {
                 return answer.First().InnerText;
