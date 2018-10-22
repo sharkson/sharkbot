@@ -7,7 +7,7 @@ namespace SharkbotReplier.Services
     public class ResponseService
     {
         private ConversationMatchService conversationMatchService;
-        private UserPropertyMatchService userPropertyService;
+        private UserPropertyMatchService userPropertyMatchService;
         private LyricsMatchService lyricsService;
         private GoogleMatchService.GoogleMatchService googleService;
         private UrbanDictionaryMatchService urbanDictionaryService;
@@ -19,13 +19,13 @@ namespace SharkbotReplier.Services
 
         public ResponseService()
         {
-            conversationMatchService = new ConversationMatchService();
-            userPropertyService = new UserPropertyMatchService();
+            conversationMatchService = new ConversationMatchService(new ConversationMatcher.Services.BestMatchService());
+            userPropertyMatchService = new UserPropertyMatchService(new UserService.UserPropertyRetrievalService(), new UserService.BotPropertyRetrievalService());
             lyricsService = new LyricsMatchService();
             googleService = new GoogleMatchService.GoogleMatchService();
             urbanDictionaryService = new UrbanDictionaryMatchService();
             salutationService = new SalutationService();
-            responseConversionService = new ResponseConversionService();
+            responseConversionService = new ResponseConversionService(new UserService.UserPropertyService(), new UserService.PropertyValueService());
         }
 
         public ChatResponse GetResponse(Conversation analyzedConversation, List<string> excludedTypes, List<string> subjectGoals)
@@ -37,7 +37,7 @@ namespace SharkbotReplier.Services
 
             var conversationChatResponse = conversationMatchService.GetConversationMatch(analyzedConversation, excludedTypes, subjectGoals);
  
-            var userPropertyChatResponse = userPropertyService.GetUserPropertyMatch(analyzedConversation);
+            var userPropertyChatResponse = userPropertyMatchService.GetUserPropertyMatch(analyzedConversation);
 
             var lyricsChatResponse = lyricsService.GetLyricsMatch(analyzedConversation);
 
@@ -91,7 +91,7 @@ namespace SharkbotReplier.Services
         {
             //TODO: change type to list of types, pass that in. if it's empty do any
             var conversationChatResponse = conversationMatchService.GetConversationMatch(analyzedConversation, requiredTypes, requiredProperyMatches, excludedTypes, subjectGoals);
-            var userPropertyChatResponse = userPropertyService.GetUserPropertyMatch(analyzedConversation);
+            var userPropertyChatResponse = userPropertyMatchService.GetUserPropertyMatch(analyzedConversation);
 
             var matchChat = conversationChatResponse;
 

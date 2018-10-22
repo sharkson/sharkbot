@@ -7,13 +7,13 @@ namespace SharkbotReplier.Services
 {
     public class UserPropertyMatchService
     {
-        UserPropertyRetrievalService userPropertyRetrievalService;
-        BotPropertyRetrievalService botPropertyRetrievalService;
+        UserPropertyRetrievalService _userPropertyRetrievalService;
+        BotPropertyRetrievalService _botPropertyRetrievalService;
 
-        public UserPropertyMatchService()
+        public UserPropertyMatchService(UserPropertyRetrievalService userPropertyRetrievalService, BotPropertyRetrievalService botPropertyRetrievalService)
         {
-            userPropertyRetrievalService = new UserPropertyRetrievalService();
-            botPropertyRetrievalService = new BotPropertyRetrievalService();
+            _userPropertyRetrievalService = userPropertyRetrievalService;
+            _botPropertyRetrievalService = botPropertyRetrievalService;
         }
 
         public ChatResponse GetUserPropertyMatch(Conversation analyzedConversation)
@@ -23,14 +23,14 @@ namespace SharkbotReplier.Services
 
             if (userData != null)
             {
-                var userResponse = userPropertyRetrievalService.GetYourPropertyResponse(analyzedChat, userData);
+                var userResponse = _userPropertyRetrievalService.GetYourPropertyResponse(analyzedChat, userData);
                 if (userResponse.response.Count > 0)
                 {
                     return userResponse;
                 }
                 else
                 {
-                    var otherResponse = userPropertyRetrievalService.GetOtherPropertyResponse(analyzedChat, UserDatabase.UserDatabase.userDatabase);
+                    var otherResponse = _userPropertyRetrievalService.GetOtherPropertyResponse(analyzedChat, UserDatabase.UserDatabase.userDatabase);
                     if (otherResponse.response.Count > 0)
                     {
                         return otherResponse;
@@ -40,7 +40,7 @@ namespace SharkbotReplier.Services
                         var botData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(u => u.userName == analyzedChat.chat.botName);
                         if (botData != null)
                         {
-                            var botResponse = botPropertyRetrievalService.GetPropertyResponse(analyzedChat, botData);
+                            var botResponse = _botPropertyRetrievalService.GetPropertyResponse(analyzedChat, botData);
                             if (botResponse.response.Count > 0)
                             {
                                 return botResponse;

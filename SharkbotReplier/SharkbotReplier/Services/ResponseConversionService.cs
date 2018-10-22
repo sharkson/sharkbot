@@ -1,12 +1,21 @@
 ﻿using ChatModels;
 using System.Collections.Generic;
 using System.Linq;
+using UserService;
 
 namespace SharkbotReplier.Services
 {
     public class ResponseConversionService
     {
-        //TODO: make sure what's being said isn't a property conflict ex. "I have blue eyes." when the bot has a property of green eyes
+        UserPropertyService _userPropertyService;
+        PropertyValueService _propertyValueService;
+
+        public ResponseConversionService(UserPropertyService userPropertyService, PropertyValueService propertyValueService)
+        {
+            _userPropertyService = userPropertyService;
+            _propertyValueService = propertyValueService;
+        }
+
         public List<string> ConvertResponse(AnalyzedChat target, MatchChat match)
         {
             var responses = new List<string>();
@@ -35,10 +44,28 @@ namespace SharkbotReplier.Services
                     }
                 }
 
+                chat = ConvertProperty(target, match, matchChat, chat, userData);
+
                 responses.Add(chat.Trim());
             }
 
             return responses;
+        }
+
+        private string ConvertProperty(AnalyzedChat target, MatchChat match, AnalyzedChat matchChat, string chat, UserData userData)
+        {
+            var property = _userPropertyService.GetProperty(matchChat, match.analyzedChat);
+            var botUserData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(u => u.userName == target.chat.botName);
+            if (!string.IsNullOrEmpty(property.name))
+            {
+                var botProperty = _propertyValueService.getPropertyByValue(property.name, userData);
+                if (!string.IsNullOrEmpty(botProperty.value))
+                {
+                    chat.Replace(property.value, botProperty.value);
+                }
+            }
+
+            return chat;
         }
 
         private string PaddedString(string input)
