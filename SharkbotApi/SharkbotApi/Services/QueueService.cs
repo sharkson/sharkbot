@@ -47,10 +47,7 @@ namespace SharkbotApi.Services
 
                     return response;
                 }
-                else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
-                {
-                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
-                }
+                CleanQueue();
             }
             return Task.Delay(queueDelay).ContinueWith((task) => { return GetResponse(responseRequest); }).Result;
         }
@@ -79,10 +76,7 @@ namespace SharkbotApi.Services
 
                     return updated;
                 }
-                else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
-                {
-                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
-                }
+                CleanQueue();
             }
 
             return Task.Delay(queueDelay).ContinueWith((task) => { return UpdateConversation(chat); }).Result;
@@ -111,13 +105,23 @@ namespace SharkbotApi.Services
                     ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                     return updated;
                 }
-                else if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
-                {
-                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
-                }
+                CleanQueue();
             }
 
             return Task.Delay(queueDelay).ContinueWith((task) => { return UpdateConversation(conversationRequest); }).Result;
+        }
+
+        private void CleanQueue()
+        {
+            ConversationQueueItem peekedQueueItem;
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem))
+            {
+                if (peekedQueueItem.RequestTime.Value.AddMilliseconds(maximumDelay) < DateTime.Now)
+                {
+                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                    CleanQueue();
+                }
+            }
         }
     }
 }
