@@ -80,7 +80,7 @@ namespace GoogleMatchService
 
         private string CleanResult(string result)
         {
-            return WebUtility.HtmlDecode(result).Replace("???", string.Empty);
+            return WebUtility.HtmlDecode(result).Replace("???", string.Empty).Replace("??", " ");
         }
 
         private string GetTime(WebPage searchResult)
