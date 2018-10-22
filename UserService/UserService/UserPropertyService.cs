@@ -13,7 +13,7 @@ namespace UserService
         private List<string> propertySearchNameValue = new List<string>() { "my (\\p{L}*) is (\\p{L}*)", "my (\\p{L}*) are (\\p{L}*)" };
         private List<string> propertySearchValueName = new List<string>() { "i have an (\\p{L}*) (\\p{L}*)", "i have a (\\p{L}*) (\\p{L}*)", "i have (\\p{L}*) (\\p{L}*)" };
         private List<string> selfPropertySearchValueName = new List<string>() { "i am a (\\p{L}*)", "i am an (\\p{L}*)", "i am (\\p{L}*)", "i'm a (\\p{L}*)", "i'm an (\\p{L}*)", "i'm (\\p{L}*)" };
-        private List<string> excludePropertySearch = new List<string>();
+        private List<string> excludePropertySearch = new List<string>(); //TODO: not I am going, etc.
 
         public UserPropertyService()
         {

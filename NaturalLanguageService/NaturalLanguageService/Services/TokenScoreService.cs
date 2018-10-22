@@ -36,19 +36,9 @@ namespace ConversationMatcher.Services
                         tokenScore = .75 * tokenValue;
                     }
                 }
-                else if ((token.POSTag == "NNS" && targetToken.POSTag == "NN") || (token.POSTag == "NNPS" && targetToken.POSTag == "NNP"))
+                else if(token.Stem == targetToken.Stem)
                 {
-                    if (NaturalLanguageService.NaturalLanguageService.GetSingularForms(token.Lexeme.ToLower()).Contains(targetToken.Lexeme.ToLower()))
-                    {
-                        tokenScore = .75 * tokenValue;
-                    }
-                }
-                else if ((token.POSTag == "NN" && targetToken.POSTag == "NNS") || (token.POSTag == "NNP" && targetToken.POSTag == "NNPS"))
-                {
-                    if (NaturalLanguageService.NaturalLanguageService.GetSingularForms(targetToken.Lexeme.ToLower()).Contains(token.Lexeme.ToLower()))
-                    {
-                        tokenScore = .75 * tokenValue;
-                    }
+                    tokenScore = .75 * tokenValue;
                 }
 
                 if (tokenScore > bestScore)

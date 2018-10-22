@@ -5,12 +5,15 @@ using SharpNL.Analyzer;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Annytab.Stemmer;
 
 namespace NaturalLanguageService
 {
     public static class NaturalLanguageService
     {
         private static AggregateAnalyzer analyzer;
+
+        private static EnglishStemmer wordStemmer;
 
         public static dynamic POSTagValues;
 
@@ -19,6 +22,7 @@ namespace NaturalLanguageService
         public static void LoadAnalyzationData(string sent, string token, string pos, string chunker, string tags, string nouns)
         {
             analyzer = new AggregateAnalyzer { sent, token, pos, chunker };
+            wordStemmer = new EnglishStemmer();
 
             string[] lines = File.ReadAllLines(tags);
             POSTagValues = JObject.Parse(lines[0]);
@@ -43,6 +47,7 @@ namespace NaturalLanguageService
                         var token = new Token();
                         token.POSTag = t.POSTag;
                         token.Lexeme = t.Lexeme;
+                        token.Stem = wordStemmer.GetSteamWord(t.Lexeme);
                         sentence.tokens.Add(token);
                     }
 
@@ -57,6 +62,7 @@ namespace NaturalLanguageService
                             var token = new Token();
                             token.POSTag = t.POSTag;
                             token.Lexeme = t.Lexeme;
+                            token.Stem = wordStemmer.GetSteamWord(t.Lexeme);
                             chunk.tokens.Add(token);
                         }
                         sentence.chunks.Add(chunk);
@@ -78,33 +84,6 @@ namespace NaturalLanguageService
             naturalLanguageData.sentences = sentences;
 
             return naturalLanguageData;
-        }
-
-        public static List<string> GetSingularForms(string pluralWord)
-        {
-            var singularWords = new List<string>();
-            if (pluralWord.EndsWith("ii"))
-            {
-                var index = pluralWord.LastIndexOf("ii");
-                singularWords.Add(pluralWord.Remove(index, 2).Insert(index, "us"));
-            }
-            if (pluralWord.EndsWith("ies"))
-            {
-                var index = pluralWord.LastIndexOf("ies");
-                singularWords.Add(pluralWord.Remove(index, 3).Insert(index, "y"));
-            }
-            if (pluralWord.EndsWith("es"))
-            {
-                var index = pluralWord.LastIndexOf("es");
-                singularWords.Add(pluralWord.Remove(index, 2));
-            }
-            if (pluralWord.EndsWith("s"))
-            {
-                var index = pluralWord.LastIndexOf("s");
-                singularWords.Add(pluralWord.Remove(index, 1));
-            }
-
-            return singularWords;
         }
 
         private static Triplets getSentenceTriplets(List<Chunk> chunks)

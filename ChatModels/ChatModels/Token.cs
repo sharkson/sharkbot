@@ -8,5 +8,7 @@ namespace ChatModels
         public string POSTag { get; set; }
 
         public string Lexeme { get; set; }
+
+        public string Stem { get; set; }
     }
 }

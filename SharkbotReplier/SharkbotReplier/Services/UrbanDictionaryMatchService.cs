@@ -53,9 +53,8 @@ namespace SharkbotReplier.Services
         }
 
         private int scoreThreshold = 5;
-
-        private List<string> definitionSearches = new List<string>() { "what does (.*) mean", "what's (.*) mean", "what is a (.*)", "what are (.*)", "what's a (.*)", "what's (.*)\\?", "what's (.*)", "what is a (.*) ", "what are (.*) ", "what's a (.*) ", "what is a (.*)\\?", "what's a (.*)\\?", "what are (.*)\\?", "what is (.*)", "what is (.*)\\?" };
-        private List<string> excludedWords = new List<string>() { "it", "that", "they" };
+        private List<string> definitionSearches = new List<string>() { "what does (.*) mean", "what's (.*) mean", "what (.*) means", "what is a (.*)", "what are (.*)", "what's a (.*)", "what's (.*)\\?", "what's (.*)", "what is a (.*) ", "what are (.*) ", "what's a (.*) ", "what is a (.*)\\?", "what's a (.*)\\?", "what are (.*)\\?", "what is (.*)", "what is (.*)\\?", "what (.*) is\\?" };
+        private List<string> excludedWords = new List<string>() { "it", "that", "they", "she", "he" };
 
         public ChatResponse GetDefinition(string word)
         {

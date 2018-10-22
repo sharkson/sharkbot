@@ -14,10 +14,9 @@ namespace ChatAnalyzer.Services
             {
                 foreach (var token in sentence.tokens)
                 {
-                    if (token.POSTag == "NN" || token.POSTag == "NNP")
+                    if (token.POSTag == "NN" || token.POSTag == "NNP" || token.POSTag == "NNS" || token.POSTag == "NNPS")
                     {
-                        var lowerCaseToken = token.Lexeme.ToLower();
-                        var index = subjects.FindIndex(s => s.subjectWords.Contains(lowerCaseToken));
+                        var index = subjects.FindIndex(s => s.subjectWords.Contains(token.Stem));
                         if (index >= 0)
                         {
                             subjects[index].occurenceCount++;
@@ -27,25 +26,7 @@ namespace ChatAnalyzer.Services
                             var subject = new ConversationSubject();
                             subject.occurenceCount = 1;
                             subject.subjectWords = new List<string>();
-                            subject.subjectWords.Add(lowerCaseToken);
-                            subjects.Add(subject);
-                        }
-                    }
-                    else if (token.POSTag == "NNS" || token.POSTag == "NNPS")
-                    {
-                        var lowerCaseToken = token.Lexeme.ToLower();
-                        var singularForms = NaturalLanguageService.NaturalLanguageService.GetSingularForms(lowerCaseToken);
-                        var index = subjects.FindIndex(s => s.subjectWords.Where(sw => singularForms.Contains(sw)).Any());
-                        if (index >= 0)
-                        {
-                            subjects[index].occurenceCount++;
-                        }
-                        else
-                        {
-                            var subject = new ConversationSubject();
-                            subject.occurenceCount = 1;
-                            subject.subjectWords = new List<string>();
-                            subject.subjectWords.AddRange(singularForms);
+                            subject.subjectWords.Add(token.Stem);
                             subjects.Add(subject);
                         }
                     }
