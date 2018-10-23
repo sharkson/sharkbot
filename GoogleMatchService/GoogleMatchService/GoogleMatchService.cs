@@ -23,7 +23,7 @@ namespace GoogleMatchService
         {
             var request = conversation.responses.Last();
             var searchText = request.chat.message.Replace("@" + request.chat.botName, string.Empty).Replace(request.chat.botName, string.Empty).Trim();
-
+            
             var response = new List<string>();
 
             var googleResult = GetSearchResult(searchText);
@@ -42,49 +42,49 @@ namespace GoogleMatchService
             {
                 var searchResult = browser.NavigateToPage(new Uri(searchUrl + searchString));
 
-                if(searchString.Contains(" "))
+                if (searchString.Contains(" ") && searchString.Length > 5)
                 {
                     var definition = CleanResult(GetDefinition(searchResult));
                     if (!string.IsNullOrWhiteSpace(definition))
                     {
                         return definition;
                     }
-                }
 
-                var time = CleanResult(GetTime(searchResult));
-                if (!string.IsNullOrWhiteSpace(time))
-                {
-                    return time;
-                }
+                    var time = CleanResult(GetTime(searchResult));
+                    if (!string.IsNullOrWhiteSpace(time))
+                    {
+                        return time;
+                    }
 
-                var death = CleanResult(GetDeath(searchResult));
-                if (!string.IsNullOrWhiteSpace(death))
-                {
-                    return death;
-                }
+                    var death = CleanResult(GetDeath(searchResult));
+                    if (!string.IsNullOrWhiteSpace(death))
+                    {
+                        return death;
+                    }
+                    //TODO: don't match really short strings like "idk"
+                    var longDescription = CleanResult(GetLongDescription(searchResult));
+                    if (!string.IsNullOrWhiteSpace(longDescription))
+                    {
+                        return longDescription;
+                    }
 
-                var longDescription = CleanResult(GetLongDescription(searchResult));
-                if (!string.IsNullOrWhiteSpace(longDescription))
-                {
-                    return longDescription;
+                    var translation = CleanResult(GetTranslation(searchResult));
+                    if (!string.IsNullOrWhiteSpace(translation))
+                    {
+                        return translation;
+                    }
+
+                    var wiki = CleanResult(GetWikipediaSummary(searchResult));
+                    if (!string.IsNullOrWhiteSpace(wiki))
+                    {
+                        return wiki;
+                    }
                 }
 
                 var calculation = CleanResult(GetCalculation(searchResult));
                 if (!string.IsNullOrWhiteSpace(calculation))
                 {
                     return calculation;
-                }
-
-                var translation = CleanResult(GetTranslation(searchResult));
-                if (!string.IsNullOrWhiteSpace(translation))
-                {
-                    return translation;
-                }
-
-                var wiki = CleanResult(GetWikipediaSummary(searchResult));
-                if (!string.IsNullOrWhiteSpace(wiki))
-                {
-                    return wiki;
                 }
             }
             catch (AggregateException exception)
