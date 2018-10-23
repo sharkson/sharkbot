@@ -22,7 +22,7 @@ namespace GoogleMatchService
         public ChatResponse GetGoogleMatch(Conversation conversation)
         {
             var request = conversation.responses.Last();
-            var searchText = request.chat.message.Replace("@" + request.chat.botName, string.Empty).Replace(request.chat.botName, string.Empty);
+            var searchText = request.chat.message.Replace("@" + request.chat.botName, string.Empty).Replace(request.chat.botName, string.Empty).Trim();
 
             var response = new List<string>();
 
@@ -42,10 +42,13 @@ namespace GoogleMatchService
             {
                 var searchResult = browser.NavigateToPage(new Uri(searchUrl + searchString));
 
-                var definition = CleanResult(GetDefinition(searchResult));
-                if (!string.IsNullOrWhiteSpace(definition))
+                if(searchString.Contains(" "))
                 {
-                    return definition;
+                    var definition = CleanResult(GetDefinition(searchResult));
+                    if (!string.IsNullOrWhiteSpace(definition))
+                    {
+                        return definition;
+                    }
                 }
 
                 var time = CleanResult(GetTime(searchResult));

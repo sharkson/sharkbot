@@ -48,7 +48,7 @@ namespace SharkbotReplier.Services
 
             var urbanDictionaryChatResponse = urbanDictionaryService.GetUrbanDictionaryMatch(analyzedConversation);
 
-            //TODO: run all matches simultaneously then decide which one to use
+            //TODO: run all matches simultaneously then decide which one to use, set a maximum time to wait for each one, ignore it if it takes too long
 
             var matchChat = conversationChatResponse;
 
