@@ -74,6 +74,18 @@ namespace GoogleMatchService
                 {
                     return calculation;
                 }
+
+                var translation = CleanResult(GetTranslation(searchResult));
+                if (!string.IsNullOrWhiteSpace(translation))
+                {
+                    return translation;
+                }
+
+                var wiki = CleanResult(GetWikipediaSummary(searchResult));
+                if (!string.IsNullOrWhiteSpace(wiki))
+                {
+                    return wiki;
+                }
             }
             catch (AggregateException exception)
             {
@@ -129,6 +141,26 @@ namespace GoogleMatchService
         private string GetCalculation(WebPage searchResult)
         {
             var answer = searchResult.Html.CssSelect("#cwos");
+            if (answer.Count() > 0 && !string.IsNullOrWhiteSpace(answer.First().InnerText))
+            {
+                return answer.First().InnerText;
+            }
+            return string.Empty;
+        }
+
+        private string GetTranslation(WebPage searchResult)
+        {
+            var answer = searchResult.Html.CssSelect("#tw-target-text");
+            if (answer.Count() > 0 && !string.IsNullOrWhiteSpace(answer.First().InnerText))
+            {
+                return answer.First().InnerText;
+            }
+            return string.Empty;
+        }
+
+        private string GetWikipediaSummary(WebPage searchResult)
+        {
+            var answer = searchResult.Html.CssSelect(".ILfuVd");
             if (answer.Count() > 0 && !string.IsNullOrWhiteSpace(answer.First().InnerText))
             {
                 return answer.First().InnerText;
