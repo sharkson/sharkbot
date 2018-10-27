@@ -1,4 +1,5 @@
 ﻿using ChatModels;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -67,7 +68,7 @@ namespace UserService
             return string.Format(yourPropertySentence, userProperty.value);
         }
 
-        public ChatResponse GetOtherPropertyResponse(AnalyzedChat analyzedChat, List<UserData> users)
+        public ChatResponse GetOtherPropertyResponse(AnalyzedChat analyzedChat, ConcurrentBag<UserData> users)
         {
             var requestedUserNameAndProperty = getOtherRequestedPropertyName(analyzedChat, users);
             if (!string.IsNullOrEmpty(requestedUserNameAndProperty.userName))
@@ -85,7 +86,7 @@ namespace UserService
         }
 
         private List<string> otherPropertySearch = new List<string>() { "is (\\p{L}*) (\\p{L}*)" };
-        private UserNameAndProperty getOtherRequestedPropertyName(AnalyzedChat analyzedChat, List<UserData> users)
+        private UserNameAndProperty getOtherRequestedPropertyName(AnalyzedChat analyzedChat, ConcurrentBag<UserData> users)
         {
             foreach (var regex in otherPropertySearch)
             {

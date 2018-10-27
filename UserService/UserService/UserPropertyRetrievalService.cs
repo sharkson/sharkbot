@@ -1,4 +1,5 @@
 ﻿using ChatModels;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -74,7 +75,7 @@ namespace UserService
             return string.Format(yourPropertySentence, userProperty.name, verb, userProperty.value);
         }
 
-        public ChatResponse GetOtherPropertyResponse(AnalyzedChat analyzedChat, List<UserData> users)
+        public ChatResponse GetOtherPropertyResponse(AnalyzedChat analyzedChat, ConcurrentBag<UserData> users)
         {
             var requestedUserNameAndProperty = getOtherRequestedPropertyName(analyzedChat, users);
             if (!string.IsNullOrEmpty(requestedUserNameAndProperty.userName))
@@ -93,7 +94,7 @@ namespace UserService
 
         //TODO: who is * //search nicknames and give username.  * is @username, if say name instead of nickname say some properties of that user, check if user is in property of another user
         private List<string> otherPropertySearch = new List<string>() { "is (\\p{L}*)'s (\\p{L}*)", "are (\\p{L}*)'s (\\p{L}*)" };
-        private UserNameAndProperty getOtherRequestedPropertyName(AnalyzedChat analyzedChat, List<UserData> users)
+        private UserNameAndProperty getOtherRequestedPropertyName(AnalyzedChat analyzedChat, ConcurrentBag<UserData> users)
         {
             foreach (var regex in otherPropertySearch)
             {

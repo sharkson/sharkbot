@@ -2,7 +2,6 @@
 using ChatModels;
 using NaturalLanguageService.Services;
 using SharkbotConfiguration;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ChatAnalyzer.Services

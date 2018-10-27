@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.36.1.1226" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\ChatModels\ChatModels\ChatModels.csproj" />
     <ProjectReference Include="..\..\ConversationDatabase\ConversationDatabase\ConversationDatabase.csproj" />
     <ProjectReference Include="..\..\ConversationMatcher\ConversationMatcher\ConversationMatcher.csproj" />

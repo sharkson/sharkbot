@@ -17,13 +17,14 @@ namespace GoogleMatchService
         public GoogleMatchService()
         {
             browser = new ScrapingBrowser();
+            ignoreList = new List<string> { "how are you" };
         }
 
         public ChatResponse GetGoogleMatch(Conversation conversation)
         {
             var request = conversation.responses.Last();
             var searchText = request.chat.message.Replace("@" + request.chat.botName, string.Empty).Replace(request.chat.botName, string.Empty).Trim();
-            
+
             var response = new List<string>();
 
             var googleResult = GetSearchResult(searchText);
@@ -36,13 +37,15 @@ namespace GoogleMatchService
             return new ChatResponse { confidence = 0, response = response };
         }
 
+        private List<string> ignoreList;
+
         private string GetSearchResult(string searchString)
         {
             try
             {
                 var searchResult = browser.NavigateToPage(new Uri(searchUrl + searchString));
 
-                if (searchString.Contains(" ") && searchString.Length > 5)
+                if (DoTextSearch(searchString))
                 {
                     var definition = CleanResult(GetDefinition(searchResult));
                     if (!string.IsNullOrWhiteSpace(definition))
@@ -61,7 +64,7 @@ namespace GoogleMatchService
                     {
                         return death;
                     }
-                    //TODO: don't match really short strings like "idk"
+
                     var longDescription = CleanResult(GetLongDescription(searchResult));
                     if (!string.IsNullOrWhiteSpace(longDescription))
                     {
@@ -89,8 +92,14 @@ namespace GoogleMatchService
             }
             catch (AggregateException exception)
             {
+                Console.WriteLine(exception);
             }
             return string.Empty;
+        }
+
+        private bool DoTextSearch(string searchString)
+        {
+            return searchString.Contains(" ") && searchString.Length > 5 && !ignoreList.Any(i => searchString.ToLower().Contains(i));
         }
 
         private string CleanResult(string result)

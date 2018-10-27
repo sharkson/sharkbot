@@ -1,4 +1,5 @@
 ﻿using ChatModels;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,7 +31,7 @@ namespace ChatAnalyzer.Services
         private double wordsTypedPerSecond = 2.5;
         private double maximumResponseTime = 60;
 
-        public double getReplyConfidence(AnalyzedChat chat, AnalyzedChat response, List<UserData> users, bool groupChat)
+        public double getReplyConfidence(AnalyzedChat chat, AnalyzedChat response, ConcurrentBag<UserData> users, bool groupChat)
         {
             var maxConfidence = 1.0;
 

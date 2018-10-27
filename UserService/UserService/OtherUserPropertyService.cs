@@ -1,8 +1,7 @@
 ﻿using ChatModels;
-using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace UserService
 {
@@ -21,7 +20,7 @@ namespace UserService
             propertyMatchService = new PropertyMatchService();
         }
 
-        public UserNameAndProperty GetOtherUserProperty(AnalyzedChat analyzedChat, List<UserData> users)
+        public UserNameAndProperty GetOtherUserProperty(AnalyzedChat analyzedChat, ConcurrentBag<UserData> users)
         {
             if (!excludePropertySearch.Any(e => analyzedChat.chat.message.ToLower().Contains(e)))
             {

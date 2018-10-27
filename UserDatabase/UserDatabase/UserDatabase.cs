@@ -1,5 +1,5 @@
 ﻿using ChatModels;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using UserDatabase.Services;
 
@@ -7,7 +7,8 @@ namespace UserDatabase
 {
     public class UserDatabase
     {
-        public static List<UserData> userDatabase;
+        public static ConcurrentBag<UserData> userDatabase { get; set; }
+
         public static string userDirectory;
 
         private static UserLoadService userLoadService;
@@ -19,7 +20,7 @@ namespace UserDatabase
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            userDatabase = new List<UserData>(userLoadService.LoadUsers());
+            userDatabase = new ConcurrentBag<UserData>(userLoadService.LoadUsers());
 
             stopwatch.Stop();
             Debug.WriteLine("user database load time: " + stopwatch.Elapsed);
