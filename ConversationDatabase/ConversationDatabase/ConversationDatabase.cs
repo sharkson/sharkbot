@@ -1,6 +1,6 @@
 ﻿using ChatModels;
 using ConversationDatabase.Services;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace ConversationDatabase
@@ -8,7 +8,7 @@ namespace ConversationDatabase
     public static class ConversationDatabase
     {
         private static ConversationLoadService conversationService;
-        public static List<ConversationList> conversationDatabase;
+        public static ConcurrentBag<ConversationList> conversationDatabase;
         public static string conversationDirectory;
 
         public static void LoadDatabase(string directory)
@@ -18,7 +18,7 @@ namespace ConversationDatabase
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            conversationDatabase = new List<ConversationList>(conversationService.LoadConversations());
+            conversationDatabase = new ConcurrentBag<ConversationList>(conversationService.LoadConversations());
 
             stopwatch.Stop();
             Debug.WriteLine("conversation database load time: " + stopwatch.Elapsed);

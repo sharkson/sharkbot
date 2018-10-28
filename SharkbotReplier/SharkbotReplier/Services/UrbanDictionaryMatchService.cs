@@ -16,6 +16,7 @@ namespace SharkbotReplier.Services
 
         public ChatResponse GetUrbanDictionaryMatch(Conversation analyzedConversation)
         {
+            //TODO: if they say "what is that" get the definition of the previous response's subject
             var request = analyzedConversation.responses.Last();
 
             var matchedDefinition = GetDefinitionFormatMatch(request);

@@ -17,7 +17,7 @@ namespace GoogleMatchService
         public GoogleMatchService()
         {
             browser = new ScrapingBrowser();
-            ignoreList = new List<string> { "how are you" };
+            ignoreList = new List<string> { "how are you", "what is that" };
         }
 
         public ChatResponse GetGoogleMatch(Conversation conversation)
