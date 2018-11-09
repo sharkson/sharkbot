@@ -1,4 +1,5 @@
 ﻿using ChatModels;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,24 +16,20 @@ namespace ConversationDatabase.Services
 
         public bool UpdateConversation(Conversation conversation, string type)
         {
-            if (ConversationDatabase.conversationDatabase.Any(cl => cl.type == type))
+            if (ConversationDatabase.conversationDatabase.ContainsKey(type))
             {
-                if (ConversationDatabase.conversationDatabase.Where(cl => cl.type == type).First().conversations.Any(c => c.name == conversation.name))
-                {
-                    ConversationDatabase.conversationDatabase.Where(cl => cl.type == type).First().conversations.Remove(ConversationDatabase.conversationDatabase.Where(cl => cl.type == type).First().conversations.Where(c => c.name == conversation.name).First());
-                }
-                ConversationDatabase.conversationDatabase.Where(cl => cl.type == type).First().conversations.Add(conversation);
+                ConversationDatabase.conversationDatabase[type].conversations[conversation.name] = conversation;
             }
             else
             {
-                var converstaions = new List<Conversation>();
-                converstaions.Add(conversation);
+                var converstaions = new ConcurrentDictionary<string, Conversation>();
+                converstaions[conversation.name] = conversation;
                 var list = new ConversationList
                 {
                     type = type,
                     conversations = converstaions
                 };
-                ConversationDatabase.conversationDatabase.Add(list);
+                ConversationDatabase.conversationDatabase[type] = list;
             }
 
             conversationSaveService.SaveConversation(conversation, type);

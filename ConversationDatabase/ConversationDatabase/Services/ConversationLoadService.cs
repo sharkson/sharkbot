@@ -22,26 +22,27 @@ namespace ConversationDatabase.Services
             analyzationService = new AnalyzationService();
         }
 
-        public List<ConversationList> LoadConversations()
+        public ConcurrentDictionary<string, ConversationList> LoadConversations()
         {
             var analyzationVersion = ConfigurationService.AnalyzationVersion;
 
-            var conversationLists = new List<ConversationList>();
+            var conversationLists = new ConcurrentDictionary<string, ConversationList>();
 
             foreach (var directory in Directory.GetDirectories(_databaseDirectory))
             {
-                conversationLists.Add(LoadConversationList(directory));
+                conversationLists[Path.GetFileName(directory)] = LoadConversationList(directory);
             }
 
-            for (var index = 0; index < conversationLists.Count(); index++)
-            {
-                for(var subIndex = 0; subIndex < conversationLists[index].conversations.Count(); subIndex++)
+            foreach (var conversationList in conversationLists)
+            {               
+                foreach (var conversation in conversationList.Value.conversations)
                 {
-                    if (conversationLists[index].conversations[subIndex].analyzationVersion != analyzationVersion)
+                    if (conversation.Value.analyzationVersion != analyzationVersion)
                     {
-                        conversationLists[index].conversations[subIndex] = analyzationService.AnalyzeConversation(conversationLists[index].conversations[subIndex]);
-                        var json = JsonConvert.SerializeObject(conversationLists[index].conversations[subIndex]);
-                        File.WriteAllText(_databaseDirectory + "\\" + conversationLists[index].type + "\\" + conversationLists[index].conversations[subIndex].name + ".json", json, Encoding.Unicode);
+                        var analyzedConversation = analyzationService.AnalyzeConversation(conversation.Value);
+                        conversationLists[conversationList.Key].conversations[conversation.Key] = analyzedConversation;
+                        var json = JsonConvert.SerializeObject(analyzedConversation);
+                        File.WriteAllText(_databaseDirectory + "\\" + conversationList.Value.type + "\\" + analyzedConversation.name + ".json", json, Encoding.Unicode);
                     }
                 }
             }
@@ -51,7 +52,7 @@ namespace ConversationDatabase.Services
 
         private ConversationList LoadConversationList(string directory)
         {
-            var conversations = new ConcurrentBag<Conversation>();
+            var conversations = new ConcurrentDictionary<string, Conversation>();
 
             string[] filePaths = Directory.GetFiles(directory);
 
@@ -65,11 +66,11 @@ namespace ConversationDatabase.Services
                     {
                         conversation.name = conversationName;
                     }
-                    conversations.Add(conversation);
+                    conversations[conversationName] = conversation;
                 }
             });
 
-            return new ConversationList { conversations = conversations.ToList(), type = Path.GetFileName(directory) };
+            return new ConversationList { conversations = conversations, type = Path.GetFileName(directory) };
         }
     }
 }

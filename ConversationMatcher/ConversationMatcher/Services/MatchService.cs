@@ -83,8 +83,9 @@ namespace ConversationMatcher.Services
             {
                 var conversationMatchList = new ConversationMatchList { type = conversationList.type, matchConversations = new ConcurrentBag<MatchConversation>() };
 
-                Parallel.ForEach(conversationList.conversations, (conversation) =>
+                Parallel.ForEach(conversationList.conversations, (conversationKeyValuePair) =>
                 {
+                    var conversation = conversationKeyValuePair.Value;
                     if (conversation.name != targetConversation.name && targetConversation.analyzationVersion != null)
                     {
                         var matchConversation = new MatchConversation

@@ -14,7 +14,7 @@ namespace ConversationSteerService.Services
             {
                 foreach (var conversation in conversationList.conversations)
                 {
-                    foreach (var conversationSubject in conversation.subjects)
+                    foreach (var conversationSubject in conversation.Value.subjects)
                     {
                         vertices.AddRange(conversationSubject.subjectWords);
                     }

@@ -14,7 +14,7 @@ namespace ConversationSteerService.Services
             {
                 foreach (var conversation in conversationList.conversations)
                 {
-                    foreach (var response in conversation.responses)
+                    foreach (var response in conversation.Value.responses)
                     {
                         foreach (var conversationSubject in response.naturalLanguageData.subjects)
                         {

@@ -11,15 +11,18 @@ namespace SharkbotApi.Services
         public Conversation GetConversation(string conversationName, string type)
         {
             var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase;
-
-            var conversationList = conversationLists.Where(cl => cl.type == type).FirstOrDefault();
+        
             Conversation conversation = null;
-            if (conversationList != null)
+            if (conversationLists.ContainsKey(type))
             {
-                var existingConversation = conversationList.conversations.Where(c => c.name == conversationName).FirstOrDefault();
-                if (existingConversation != null)
+                var conversationList = conversationLists[type];
+                if (conversationList != null && conversationList.conversations.ContainsKey(conversationName))
                 {
-                    conversation = DeepCopy(existingConversation);
+                    var existingConversation = conversationList.conversations[conversationName];
+                    if (existingConversation != null)
+                    {
+                        conversation = DeepCopy(existingConversation);
+                    }
                 }
             }
 
@@ -39,14 +42,17 @@ namespace SharkbotApi.Services
         {
             var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase;
 
-            var conversationList = conversationLists.Where(cl => cl.type == chatRequest.type).FirstOrDefault();
             Conversation conversation = null;
-            if (conversationList != null)
+            if (conversationLists.ContainsKey(chatRequest.type))
             {
-                var existingConversation = conversationList.conversations.Where(c => c.name == chatRequest.conversationName).FirstOrDefault();
-                if(existingConversation != null)
+                var conversationList = conversationLists[chatRequest.type];                
+                if (conversationList != null && conversationList.conversations.ContainsKey(chatRequest.conversationName))
                 {
-                    conversation = DeepCopy(existingConversation);
+                    var existingConversation = conversationList.conversations[chatRequest.conversationName];
+                    if (existingConversation != null)
+                    {
+                        conversation = DeepCopy(existingConversation);
+                    }
                 }
             }
 

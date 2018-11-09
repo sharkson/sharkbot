@@ -16,14 +16,14 @@ namespace SharkbotReplier.Services
 
         public MatchChat GetConversationMatch(Conversation conversation, List<string> excludedTypes, List<string> subjectGoals)
         {
-            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase.Where(cl => !excludedTypes.Any(t => cl.type == t)).ToList();
+            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase.Where(cl => !excludedTypes.Any(t => cl.Value.type == t)).Select(x => x.Value).ToList();
             var conversationMatchRequest = new ConversationMatchRequest { conversation = conversation, conversationLists = conversationLists };
             return _bestMatchService.GetBestMatch(conversationMatchRequest.conversation, conversationMatchRequest.conversationLists, subjectGoals);
         }
 
         public MatchChat GetConversationMatch(Conversation conversation, List<string> requiredTypes, List<string> requiredProperyMatches, List<string> excludedTypes, List<string> subjectGoals)
         {
-            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase.Where(cl => !excludedTypes.Any(t => cl.type == t)).ToList();
+            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase.Where(cl => !excludedTypes.Any(t => cl.Value.type == t)).Select(x => x.Value).ToList();
             if (requiredTypes.Count > 0)
             {
                 conversationLists = conversationLists.Where(cl => requiredTypes.Any(t => cl.type == t)).ToList();

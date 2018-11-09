@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Annytab.Stemmer;
+using NaturalLanguageService.Services;
 
 namespace NaturalLanguageService
 {
@@ -15,6 +16,8 @@ namespace NaturalLanguageService
 
         private static EnglishStemmer wordStemmer;
 
+        private static TripletService tripletService;
+
         public static dynamic POSTagValues;
 
         public static List<string> LowValueNouns;
@@ -23,6 +26,7 @@ namespace NaturalLanguageService
         {
             analyzer = new AggregateAnalyzer { sent, token, pos, chunker };
             wordStemmer = new EnglishStemmer();
+            tripletService = new TripletService(new ReplyTripletService(), new QuestionTripletService());
 
             string[] lines = File.ReadAllLines(tags);
             POSTagValues = JObject.Parse(lines[0]);
@@ -68,9 +72,9 @@ namespace NaturalLanguageService
                         sentence.chunks.Add(chunk);
                     }
 
-                    sentence.triplets = getSentenceTriplets(sentence.chunks);
-
                     sentence.interrogative = isInterrogative(s);
+
+                    sentence.triplets = tripletService.GetSentenceTriplets(sentence);                    
 
                     sentences.Add(sentence);
                 }
@@ -84,50 +88,6 @@ namespace NaturalLanguageService
             naturalLanguageData.sentences = sentences;
 
             return naturalLanguageData;
-        }
-
-        private static Triplets getSentenceTriplets(List<Chunk> chunks)
-        {
-            var triplets = new Triplets();
-
-            //TODO: other patterns
-            //noun-verb-nown = subject–verb–object
-            if (chunks.FindIndex(c => c.tag == "NP") < chunks.FindIndex(c => c.tag == "VP") && chunks.FindIndex(c => c.tag == "VP") < chunks.FindLastIndex(c => c.tag == "NP"))
-            {
-                var subject = chunks.Find(c => c.tag == "NP");
-                if (subject != null)
-                {
-                    triplets.subject = new Subject() { chunk = subject, confidence = 1 };
-                }
-
-                var predicate = chunks.Find(c => c.tag == "VP");
-                if (predicate != null)
-                {
-                    triplets.predicate = new Predicate() { chunk = predicate, confidence = 1 };
-                }
-
-                var objectChunk = chunks.FindLast(c => c.tag == "NP");
-                if (objectChunk != null)
-                {
-                    triplets.objectTriplet = new ObjectTriplet() { chunk = objectChunk, confidence = 1 };
-                }
-            }
-            else if (chunks.FindIndex(c => c.tag == "NP") < chunks.FindIndex(c => c.tag == "VP"))
-            {
-                var subject = chunks.Find(c => c.tag == "NP");
-                if (subject != null)
-                {
-                    triplets.subject = new Subject() { chunk = subject, confidence = 1 };
-                }
-
-                var objectChunk = chunks.Find(c => c.tag == "VP");
-                if (objectChunk != null)
-                {
-                    triplets.objectTriplet = new ObjectTriplet() { chunk = objectChunk, confidence = 1 };
-                }
-            }
-
-            return triplets;
         }
 
         private static bool isInterrogative(SharpNL.SentenceDetector.Sentence sentence)

@@ -8,7 +8,7 @@ namespace ConversationDatabase
     public static class ConversationDatabase
     {
         private static ConversationLoadService conversationService;
-        public static ConcurrentBag<ConversationList> conversationDatabase;
+        public static ConcurrentDictionary<string, ConversationList> conversationDatabase;
         public static string conversationDirectory;
 
         public static void LoadDatabase(string directory)
@@ -18,7 +18,7 @@ namespace ConversationDatabase
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            conversationDatabase = new ConcurrentBag<ConversationList>(conversationService.LoadConversations());
+            conversationDatabase = new ConcurrentDictionary<string, ConversationList>(conversationService.LoadConversations());
 
             stopwatch.Stop();
             Debug.WriteLine("conversation database load time: " + stopwatch.Elapsed);

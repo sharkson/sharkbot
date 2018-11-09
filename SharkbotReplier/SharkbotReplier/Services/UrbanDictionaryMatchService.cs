@@ -27,6 +27,27 @@ namespace SharkbotReplier.Services
                 return new ChatResponse { confidence = urbanDictionaryMatchScore, response = response };
             }
 
+            var tripletDefinition = GetTripletDefinition(request);
+            if(tripletDefinition.confidence > 0)
+            {
+                return tripletDefinition;
+            }
+
+            if (analyzedConversation.responses.Count() > 1)
+            {
+                var inResponseTo = analyzedConversation.responses[analyzedConversation.responses.Count() - 2];
+                var definition = GetDefinitionFromQuestion(request, inResponseTo);
+                if (definition.confidence > 0)
+                {
+                    return definition;
+                }
+            }
+
+            return new ChatResponse() { response = new List<string>(), confidence = 0 };
+        }
+
+        private ChatResponse GetTripletDefinition(AnalyzedChat request)
+        {
             if (request.naturalLanguageData.sentences[0].triplets.objectTriplet != null)
             {
                 var definitions = new List<ChatResponse>();
@@ -55,7 +76,7 @@ namespace SharkbotReplier.Services
 
         private int scoreThreshold = 5;
         private List<string> definitionSearches = new List<string>() { "what does (.*) mean", "what's (.*) mean", "what (.*) means", "what is a (.*)", "what are (.*)", "what's a (.*)", "what's (.*)\\?", "what's (.*)", "what is a (.*) ", "what are (.*) ", "what's a (.*) ", "what is a (.*)\\?", "what's a (.*)\\?", "what are (.*)\\?", "what is (.*)", "what is (.*)\\?", "what (.*) is\\?" };
-        private List<string> excludedWords = new List<string>() { "it", "that", "they", "she", "he" };
+        private List<string> excludedWords = new List<string>() { "it", "that", "they", "she", "he", "you", "i" };
 
         public ChatResponse GetDefinition(string word)
         {
@@ -98,17 +119,18 @@ namespace SharkbotReplier.Services
 
         private string GetDefinitionFormatMatch(AnalyzedChat chat)
         {
-            var searchText = chat.chat.message;
-            if (searchText.Contains(chat.botName))
-            {
-                searchText = searchText.Replace("@" + chat.botName, string.Empty).Replace(chat.botName, string.Empty);
-            }
+            var searchText = GetSearchText(chat);
 
             if (excludedWords.Any(e => searchText.Contains(e)))
             {
                 return string.Empty;
             }
 
+            return GetDefinitionMatch(searchText);
+        }
+
+        private string GetDefinitionMatch(string searchText)
+        {
             foreach (var regex in definitionSearches)
             {
                 var word = getMatch(searchText, regex);
@@ -147,6 +169,39 @@ namespace SharkbotReplier.Services
             }
 
             return string.Empty;
+        }
+
+        private ChatResponse GetDefinitionFromQuestion(AnalyzedChat chat, AnalyzedChat previousChat)
+        {
+            var searchText = GetSearchText(chat);
+
+            foreach (var regex in definitionSearches)
+            {
+                var word = getMatch(searchText, regex);
+                if (word != string.Empty)
+                {
+                    if(excludedWords.Any(e => word.Contains(e)))
+                    {
+                        var tripletDefinition = GetTripletDefinition(previousChat);
+                        if (tripletDefinition.confidence > 0)
+                        {
+                            return tripletDefinition;
+                        }
+                    }
+                }
+            }
+
+            return new ChatResponse() { response = new List<string>(), confidence = 0 };
+        }
+
+        private string GetSearchText(AnalyzedChat chat)
+        {
+            var searchText = chat.chat.message;
+            if (searchText.Contains(chat.botName))
+            {
+                searchText = searchText.Replace("@" + chat.botName, string.Empty).Replace(chat.botName, string.Empty);
+            }
+            return searchText;
         }
 
         private string formatDefinition(string definition)

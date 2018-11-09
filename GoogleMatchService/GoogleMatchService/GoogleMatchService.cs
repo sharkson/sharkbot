@@ -17,7 +17,7 @@ namespace GoogleMatchService
         public GoogleMatchService()
         {
             browser = new ScrapingBrowser();
-            ignoreList = new List<string> { "how are you", "what is that" };
+            ignoreList = new List<string> { "how are you", "what is that", "how is it going" };
         }
 
         public ChatResponse GetGoogleMatch(Conversation conversation)
@@ -99,7 +99,7 @@ namespace GoogleMatchService
 
         private bool DoTextSearch(string searchString)
         {
-            return searchString.Contains(" ") && searchString.Length > 5 && !ignoreList.Any(i => searchString.ToLower().Contains(i));
+            return searchString.Contains(" ") && searchString.Length > 15 && !ignoreList.Any(i => searchString.ToLower().Contains(i));
         }
 
         private string CleanResult(string result)
