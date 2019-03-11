@@ -7,8 +7,8 @@ namespace SharkbotReplier.Services
 {
     public class UserPropertyMatchService
     {
-        UserPropertyRetrievalService _userPropertyRetrievalService;
-        BotPropertyRetrievalService _botPropertyRetrievalService;
+        private readonly UserPropertyRetrievalService _userPropertyRetrievalService;
+        private readonly BotPropertyRetrievalService _botPropertyRetrievalService;
 
         public UserPropertyMatchService(UserPropertyRetrievalService userPropertyRetrievalService, BotPropertyRetrievalService botPropertyRetrievalService)
         {

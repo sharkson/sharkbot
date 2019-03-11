@@ -6,12 +6,17 @@ namespace ChatModels
     [Serializable]
     public class Sentence
     {
-        public List<Token> tokens { get; set; }
-
-        public List<Chunk> chunks { get; set; }
-
-        public Triplets triplets { get; set; }
-
-        public bool interrogative { get; set; }
+        public string Source { get; set; }
+        public List<Token> Tokens { get; set; }
+        public double Sentiment { get; set; }
+        public SentenceType SentenceType { get; set; }
+        public Voice Voice { get; set; }
+        public Token Subject { get; set; }
+        public Token Predicate { get; set; }
+        public Token Object { get; set; }
+        public List<OpenieTriple> OpenieTriples { get; set; }
     }
+
+    public enum SentenceType { Unidentifiable, Declarative, Interrogative, Imperative, Exclamatory };
+    public enum Voice { Unidentifiable, Active, Passive };
 }

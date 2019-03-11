@@ -2,7 +2,7 @@
 {
     public class GroupChatConfidenceService
     {
-        public double getGroupChatConfidence(bool targetGroupChat, bool existingGroupChat)
+        public double GetGroupChatConfidence(bool targetGroupChat, bool existingGroupChat)
         {
             if (targetGroupChat == existingGroupChat)
             {

@@ -10,22 +10,22 @@ namespace SharkbotApi.Controllers
     [EnableCors("AllowSpecificOrigin")]
     public class ConversationImportController : Controller
     {
-        QueueService queueService;
-        ConversationRequestValidationService requestValidationService;
+        private readonly QueueService _queueService;
+        private readonly ConversationRequestValidationService _requestValidationService;
 
-        public ConversationImportController()
+        public ConversationImportController(ConversationRequestValidationService requestValidationService, QueueService queueService)
         {
-            queueService = new QueueService();
-            requestValidationService = new ConversationRequestValidationService();
+            _requestValidationService = requestValidationService;
+            _queueService = queueService;
         }
 
         [HttpPut]
         public bool Put([FromBody]ConversationRequest conversationRequest)
         {
-            if (requestValidationService.ValidRequest(conversationRequest))
+            if (_requestValidationService.ValidRequest(conversationRequest))
             {
                 conversationRequest.requestTime = DateTime.Now;
-                var result = queueService.UpdateConversation(conversationRequest);
+                var result = _queueService.UpdateConversation(conversationRequest);
 
                 return result;
             }

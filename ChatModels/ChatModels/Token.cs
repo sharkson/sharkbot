@@ -5,10 +5,11 @@ namespace ChatModels
     [Serializable]
     public class Token
     {
-        public string POSTag { get; set; }
-
-        public string Lexeme { get; set; }
-
-        public string Stem { get; set; }
+        public string PosTag { get; set; }
+        public string NerTag { get; set; }
+        public string Lemmas { get; set; }
+        public string Word { get; set; }
+        public string IncomingDependencyLabel { get; set; }
+        public int? Governor { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace SharkbotReplier.Services
 {
     public class ConversationMatchService
     {
-        private BestMatchService _bestMatchService;
+        private readonly BestMatchService _bestMatchService;
 
         public ConversationMatchService(BestMatchService bestMatchService)
         {

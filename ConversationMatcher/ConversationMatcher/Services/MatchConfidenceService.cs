@@ -1,64 +1,49 @@
 ﻿using ChatModels;
+using NaturalLanguageService.Services;
 
 namespace ConversationMatcher.Services
 {
     public class MatchConfidenceService
     {
-        private TripletScoreService tripletScoreService;
-        private TokenScoreService tokenScoreService;
-        private InterogativeScoreService interogativeScoreService;
-        private ScoreService scoreService;
+        private readonly SentenceScoreService _sentenceScoreService;
 
-        public MatchConfidenceService()
+        public MatchConfidenceService(SentenceScoreService sentenceScoreService)
         {
-            tripletScoreService = new TripletScoreService();
-            tokenScoreService = new TokenScoreService();
-            interogativeScoreService = new InterogativeScoreService();
-            scoreService = new ScoreService();
+            _sentenceScoreService = sentenceScoreService;
         }
 
-        public double getMatchConfidence(NaturalLanguageData target, NaturalLanguageData naturalLanguageDocument, string botName)
+        public double GetMatchConfidence(NaturalLanguageData target, NaturalLanguageData existing, string botName)
         {
-            var confidence = getOneWayMatchConfidence(target, naturalLanguageDocument, botName);
-            var reverseConfidence = getOneWayMatchConfidence(naturalLanguageDocument, target, botName);
+            var confidence = GetNaturalLanguageDataScore(target, existing);
+            var reverseConfidence = GetNaturalLanguageDataScore(existing, target);
             var score = (confidence + reverseConfidence) / 2.0;
 
             return score;
         }
 
-        public double getOneWayMatchConfidence(NaturalLanguageData target, NaturalLanguageData naturalLanguageDocument, string botName)
+        private double GetNaturalLanguageDataScore(NaturalLanguageData target, NaturalLanguageData existing)
         {
-            //TODO: exclude names, match them, or make them less weight
             var sentencesScore = 0.0;
             foreach (var targetSentence in target.sentences)
             {
-                sentencesScore += getSentenceScore(targetSentence, naturalLanguageDocument, botName);
-            }
-            var maxSentencesScore = target.sentences.Count;
-            var score = sentencesScore / maxSentencesScore;
-
-            score = score * interogativeScoreService.getInterrogativeScore(target, naturalLanguageDocument);
-
-            return score;
-        }
-
-        public double getSentenceScore(Sentence targetSentence, NaturalLanguageData naturalLanguageDocument, string botName)
-        {           
-            if (targetSentence.triplets.subject != null)
-            {
-                return tripletScoreService.getBestTripletScore(targetSentence.triplets, naturalLanguageDocument.sentences);
-            }
-            else
-            {
-                var score = 0.0;
-                var maximumScore = 0.0;
-                foreach (var targetToken in targetSentence.tokens)
+                var bestScore = 0.0;
+                foreach(var existingSentence in existing.sentences)
                 {
-                    score += tokenScoreService.getTokenScore(targetToken, naturalLanguageDocument.sentences);
-                    maximumScore += tokenScoreService.getTokenValue(targetToken);
+                    var score = _sentenceScoreService.GetScore(targetSentence, existingSentence);
+                    if(score > bestScore)
+                    {
+                        bestScore = score;
+                    }
                 }
-                return score / maximumScore;
+                sentencesScore += bestScore;
             }
+
+            var maxSentencesScore = (double)target.sentences.Count;
+            if (maxSentencesScore == 0)
+            {
+                return 0;
+            }
+            return sentencesScore / maxSentencesScore;
         }
     }
 }

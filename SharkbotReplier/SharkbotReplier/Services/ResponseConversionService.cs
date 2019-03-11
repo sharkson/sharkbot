@@ -7,8 +7,8 @@ namespace SharkbotReplier.Services
 {
     public class ResponseConversionService
     {
-        UserPropertyService _userPropertyService;
-        PropertyValueService _propertyValueService;
+        private readonly UserPropertyService _userPropertyService;
+        private readonly PropertyValueService _propertyValueService;
 
         public ResponseConversionService(UserPropertyService userPropertyService, PropertyValueService propertyValueService)
         {

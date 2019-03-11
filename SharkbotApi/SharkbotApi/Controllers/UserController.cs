@@ -1,7 +1,6 @@
 ﻿using ChatModels;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using SharkbotApi.Services;
 using System.Linq;
 
 namespace SharkbotApi.Controllers
@@ -10,15 +9,6 @@ namespace SharkbotApi.Controllers
     [EnableCors("AllowSpecificOrigin")]
     public class UserController : Controller
     {
-        BotService botService;
-        ChatRequestValidationService requestValidationService;
-
-        public UserController()
-        {
-            botService = new BotService();
-            requestValidationService = new ChatRequestValidationService();
-        }
-
         [HttpGet("{userName}")]
         public UserData Get(string userName)
         {

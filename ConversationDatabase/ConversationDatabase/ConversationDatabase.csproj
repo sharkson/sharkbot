@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ChatAnalyzer\ChatAnalyzer\ChatAnalyzer.csproj" />
-    <ProjectReference Include="..\..\ChatModels\ChatModels\ChatModels.csproj" />
   </ItemGroup>
 
 </Project>

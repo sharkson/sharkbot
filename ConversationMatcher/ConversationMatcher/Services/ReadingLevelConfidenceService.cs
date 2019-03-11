@@ -5,7 +5,7 @@ namespace ConversationMatcher.Services
 {
     public class ReadingLevelConfidenceService
     {       
-        public double getReadingLevelConfidence(ReadingLevel targetReadingLevel, ReadingLevel existingReadingLevel)
+        public double GetReadingLevelConfidence(ReadingLevel targetReadingLevel, ReadingLevel existingReadingLevel)
         {
             var fleschKincaidReadingEaseScore = getMatchConfidence(targetReadingLevel.FleschKincaidReadingEase, existingReadingLevel.FleschKincaidReadingEase, 100.0);
             var fleschKincaidGradeLevelScore = getMatchConfidence(targetReadingLevel.FleschKincaidGradeLevel, existingReadingLevel.FleschKincaidGradeLevel, 12.0);

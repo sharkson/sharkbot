@@ -11,22 +11,22 @@ namespace SharkbotApi.Controllers
     [EnableCors("AllowSpecificOrigin")]
     public class ResponseController : Controller
     {
-        QueueService queueService;
-        ResponseRequestValidationService requestValidationService;
+        private readonly QueueService _queueService;
+        private readonly ResponseRequestValidationService _requestValidationService;
 
-        public ResponseController()
+        public ResponseController(ResponseRequestValidationService requestValidationService, QueueService queueService)
         {
-            queueService = new QueueService();
-            requestValidationService = new ResponseRequestValidationService();
+            _requestValidationService = requestValidationService;
+            _queueService = queueService;
         }
 
         [HttpPut]
         public ChatResponse Put([FromBody]ResponseRequest chat)
         {
-            if (requestValidationService.ValidRequest(chat))
+            if (_requestValidationService.ValidRequest(chat))
             {
                 chat = cleanRequest(chat);
-                var response = queueService.GetResponse(chat);
+                var response = _queueService.GetResponse(chat);
 
                 response.metadata = chat.metadata;
                 return response;

@@ -6,18 +6,18 @@ namespace ConversationMatcher.Services
 {
     public class BestMatchService
     {
-        private MatchService matchService;
+        private readonly MatchService _matchService;
 
-        public BestMatchService()
+        public BestMatchService(MatchService matchService)
         {
-            matchService = new MatchService();
+            _matchService = matchService;
         }
 
         public MatchChat GetBestMatch(Conversation targetConversation, List<ConversationList> conversationLists, List<string> subjectGoals)
         {
             var bestMatch = new MatchChat { matchConfidence = 0 };
 
-            var conversationMatchLists = matchService.GetConversationMatchLists(targetConversation, conversationLists, subjectGoals);
+            var conversationMatchLists = _matchService.GetConversationMatchLists(targetConversation, conversationLists, subjectGoals);
             foreach (var conversationMatchList in conversationMatchLists)
             {
                 foreach (var conversation in conversationMatchList.matchConversations)
@@ -30,7 +30,7 @@ namespace ConversationMatcher.Services
                             bestMatch.analyzedChat = conversation.responses[index].analyzedChat;
                             if (index + 1 < conversation.responses.Count)
                             {
-                                bestMatch.responseChat = matchService.GetResponseChat(conversation.responses, index);
+                                bestMatch.responseChat = _matchService.GetResponseChat(conversation.responses, index);
                             }
                         }
                     }
@@ -44,7 +44,7 @@ namespace ConversationMatcher.Services
         {
             var bestMatch = new MatchChat { matchConfidence = 0 };
 
-            var conversationMatchLists = matchService.GetConversationMatchLists(targetConversation, conversationLists, subjectGoals);
+            var conversationMatchLists = _matchService.GetConversationMatchLists(targetConversation, conversationLists, subjectGoals);
             foreach (var conversationMatchList in conversationMatchLists)
             {
                 foreach (var conversation in conversationMatchList.matchConversations)
@@ -57,7 +57,7 @@ namespace ConversationMatcher.Services
                             bestMatch.analyzedChat = conversation.responses[index].analyzedChat;
                             if (index + 1 < conversation.responses.Count)
                             {
-                                bestMatch.responseChat = matchService.GetResponseChat(conversation.responses, index);
+                                bestMatch.responseChat = _matchService.GetResponseChat(conversation.responses, index);
                             }
                         }
                     }

@@ -16,7 +16,7 @@ namespace ConversationSteerService.Services
                 {
                     foreach (var conversationSubject in conversation.Value.subjects)
                     {
-                        vertices.AddRange(conversationSubject.subjectWords);
+                        vertices.Add(conversationSubject.Lemmas);
                     }
                 }
             }

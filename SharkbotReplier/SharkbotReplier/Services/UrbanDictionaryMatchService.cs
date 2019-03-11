@@ -27,7 +27,7 @@ namespace SharkbotReplier.Services
                 return new ChatResponse { confidence = urbanDictionaryMatchScore, response = response };
             }
 
-            var tripletDefinition = GetTripletDefinition(request);
+            var tripletDefinition = GetSubjectDefinition(request);
             if(tripletDefinition.confidence > 0)
             {
                 return tripletDefinition;
@@ -46,22 +46,18 @@ namespace SharkbotReplier.Services
             return new ChatResponse() { response = new List<string>(), confidence = 0 };
         }
 
-        private ChatResponse GetTripletDefinition(AnalyzedChat request)
+        private ChatResponse GetSubjectDefinition(AnalyzedChat request)
         {
-            if (request.naturalLanguageData.sentences[0].triplets.objectTriplet != null)
+            if (request.naturalLanguageData.sentences[0].Subject.Lemmas != null)
             {
                 var definitions = new List<ChatResponse>();
-                foreach (var targetToken in request.naturalLanguageData.sentences[0].triplets.objectTriplet.chunk.tokens)
+
+                var definition = GetDefinition(request.naturalLanguageData.sentences[0].Subject.Lemmas);
+                if (definition.confidence > 0)
                 {
-                    if (targetToken.POSTag == "NN" || targetToken.POSTag == "NNS" || targetToken.POSTag == "NNP" || targetToken.POSTag == "NNPS" || targetToken.POSTag == "VBG")
-                    {
-                        var definition = GetDefinition(targetToken.Lexeme);
-                        if (definition.confidence > 0)
-                        {
-                            definitions.Add(definition);
-                        }
-                    }
+                    definitions.Add(definition);
                 }
+
 
                 if (definitions.Count() > 0)
                 {
@@ -80,7 +76,7 @@ namespace SharkbotReplier.Services
 
         public ChatResponse GetDefinition(string word)
         {
-            if (excludedWords.Any(e => word.Contains(e)))
+            if (excludedWords.Any(e => e.ToLower() == word))
             {
                 return new ChatResponse() { response = new List<string>(), confidence = 0 };
             }
@@ -182,7 +178,7 @@ namespace SharkbotReplier.Services
                 {
                     if(excludedWords.Any(e => word.Contains(e)))
                     {
-                        var tripletDefinition = GetTripletDefinition(previousChat);
+                        var tripletDefinition = GetSubjectDefinition(previousChat);
                         if (tripletDefinition.confidence > 0)
                         {
                             return tripletDefinition;

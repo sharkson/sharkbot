@@ -15,5 +15,6 @@ namespace ChatModels
         public List<ConversationSubject> responseSubjects { get; set; }
         public List<ConversationSubject> proximitySubjects { get; set; }
         public string userlessMessage { get; set; }
+        public string AnalyzationVersion { get; set; }
     }
 }

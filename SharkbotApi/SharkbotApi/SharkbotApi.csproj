@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ChatModels\ChatModels\ChatModels.csproj" />
     <ProjectReference Include="..\..\ConversationDatabase\ConversationDatabase\ConversationDatabase.csproj" />
     <ProjectReference Include="..\..\SharkbotReplier\SharkbotReplier\SharkbotReplier.csproj" />
     <ProjectReference Include="..\..\UserDatabase\UserDatabase\UserDatabase.csproj" />

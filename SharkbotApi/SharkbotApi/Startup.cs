@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using ChatAnalyzer.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NaturalLanguageService.Services;
+using SharkbotApi.Services;
 using SharkbotConfiguration;
+using System;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace SharkbotApi
 {
@@ -27,15 +32,28 @@ namespace SharkbotApi
                 options.AddPolicy("AllowSpecificOrigin", builder => builder.WithOrigins(corsUrls.ToArray()).AllowAnyHeader().AllowAnyMethod());
             });
 
-            ConfigurationService.AnalyzationVersion = Configuration.GetSection("NaturalLanguage:AnalyzationVersion").Value;
+            services.AddSingleton<ChatRequestValidationService, ChatRequestValidationService>();
+            services.AddSingleton<ConversationRequestValidationService, ConversationRequestValidationService>();
+            services.AddSingleton<ResponseRequestValidationService, ResponseRequestValidationService>();
 
-            NaturalLanguageService.NaturalLanguageService.LoadAnalyzationData(Configuration.GetSection("NaturalLanguage:Models:en-sent").Value, Configuration.GetSection("NaturalLanguage:Models:en-token").Value, Configuration.GetSection("NaturalLanguage:Models:en-pos-maxent").Value, Configuration.GetSection("NaturalLanguage:Models:en-chunker").Value, Configuration.GetSection("NaturalLanguage:POSTagValues").Value, Configuration.GetSection("NaturalLanguage:LowValueNouns").Value);
+            var client = new HttpClient();
+            var naturalLanguageApiUrl = Configuration.GetSection("NaturalLanguage:ApiUrl").Value;
+            client.BaseAddress = new Uri(naturalLanguageApiUrl);
+            var naturalLanguageApiService = new NaturalLanguageApiService(client);
+
+            var analyzationService = new AnalyzationService(new ConversationSubjectService(new ResponseSubjectService()), new ResponseAnalyzationService(), new ConversationTypeService(), new UserlessMessageService(), new ConversationReadingLevelService(), new ResponseSubjectService(), naturalLanguageApiService);
+            var userService = new UserService.UserService(new UserService.UserNickNameService(), new UserService.UserPropertyService(new UserService.UserNaturalLanguageService(), new UserService.PropertyMatchService(), new UserService.PropertyFromQuestionService()), new UserService.OtherUserPropertyService(new UserService.UserNaturalLanguageService(), new UserService.PropertyMatchService()), new UserService.UserDerivedPropertyService(), new UserDatabase.Services.UserSaveService());
+            var updateDatabaseService = new UpdateDatabasesService(new ConversationService(), analyzationService, new ConversationDatabase.Services.ConversationUpdateService(new ConversationDatabase.Services.ConversationSaveService()), userService);
+            var queueService = new QueueService(new BotService(new ConversationService(), analyzationService, new SharkbotReplier.Services.ResponseService(new SharkbotReplier.Services.ConversationMatchService(new ConversationMatcher.Services.BestMatchService(new ConversationMatcher.Services.MatchService(new ConversationMatcher.Services.SubjectConfidenceService(), new ConversationMatcher.Services.MatchConfidenceService(new SentenceScoreService(new OpenieScoreService(), new SubjectPredicateObjectScoreService(new SubjectPredicateObjectTokenScoreService()), new TokenScoreService(), new SentimentScoreService(), new SentenceTypeScoreService(), new VoiceScoreService())), new ConversationMatcher.Services.GroupChatConfidenceService(), new ConversationMatcher.Services.UniqueConfidenceService(), new ConversationMatcher.Services.ReadingLevelConfidenceService(), new ConversationSteerService.ConversationPathService(new ConversationSteerService.Services.EdgeService(), new ConversationSteerService.Services.VerticeService(), new ConversationSteerService.Services.ShortestPathService())))), new SharkbotReplier.Services.UserPropertyMatchService(new UserService.UserPropertyRetrievalService(new UserService.PropertyValueService(), new UserService.UserSelfPropertyRetrievalService(new UserService.UserNaturalLanguageService(), new UserService.PropertyValueService()), new UserService.UserNaturalLanguageService()), new UserService.BotPropertyRetrievalService(new UserService.BotSelfPropertyRetrievalService(new UserService.PropertyValueService(), new UserService.UserNaturalLanguageService()), new UserService.UserNaturalLanguageService(), new UserService.PropertyValueService())), new SharkbotReplier.Services.LyricsMatchService(), new GoogleMatchService.GoogleMatchService(new ScrapySharp.Network.ScrapingBrowser()), new SharkbotReplier.Services.UrbanDictionaryMatchService(), new SharkbotReplier.Services.SalutationService(), new SharkbotReplier.Services.ResponseConversionService(new UserService.UserPropertyService(new UserService.UserNaturalLanguageService(), new UserService.PropertyMatchService(), new UserService.PropertyFromQuestionService()), new UserService.PropertyValueService())), new ConversationDatabase.Services.ConversationUpdateService(new ConversationDatabase.Services.ConversationSaveService()), userService, updateDatabaseService), new ConversationService(), updateDatabaseService);
+            services.AddSingleton<QueueService>(queueService);
+
+            ConfigurationService.AnalyzationVersion = Configuration.GetSection("NaturalLanguage:AnalyzationVersion").Value;
 
             UserDatabase.UserDatabase.userDirectory = Configuration.GetSection("UserDirectory").Value;
             UserDatabase.UserDatabase.LoadDatabase(UserDatabase.UserDatabase.userDirectory);
 
             ConversationDatabase.ConversationDatabase.conversationDirectory = Configuration.GetSection("ConversationDirectory").Value;
-            ConversationDatabase.ConversationDatabase.LoadDatabase(ConversationDatabase.ConversationDatabase.conversationDirectory);
+            ConversationDatabase.ConversationDatabase.LoadDatabase(ConversationDatabase.ConversationDatabase.conversationDirectory, analyzationService);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

@@ -10,23 +10,21 @@ namespace ConversationMatcher.Services
 {
     public class MatchService
     {
-        private SubjectConfidenceService subjectConfidenceService;
-        private ScoreService scoreService;
-        private MatchConfidenceService matchConfidenceService;
-        private GroupChatConfidenceService groupChatConfidenceService;
-        private UniqueConfidenceService uniqueConfidenceService;
-        private ReadingLevelConfidenceService readingLevelConfidenceService;
-        private ConversationPathService conversationPathService;
+        private readonly SubjectConfidenceService _subjectConfidenceService;
+        private readonly MatchConfidenceService _matchConfidenceService;
+        private readonly GroupChatConfidenceService _groupChatConfidenceService;
+        private readonly UniqueConfidenceService _uniqueConfidenceService;
+        private readonly ReadingLevelConfidenceService _readingLevelConfidenceService;
+        private readonly ConversationPathService _conversationPathService;
 
-        public MatchService()
+        public MatchService(SubjectConfidenceService subjectConfidenceService, MatchConfidenceService matchConfidenceService, GroupChatConfidenceService groupChatConfidenceService, UniqueConfidenceService uniqueConfidenceService, ReadingLevelConfidenceService readingLevelConfidenceService, ConversationPathService conversationPathService)
         {
-            subjectConfidenceService = new SubjectConfidenceService();
-            scoreService = new ScoreService();
-            matchConfidenceService = new MatchConfidenceService();
-            groupChatConfidenceService = new GroupChatConfidenceService();
-            uniqueConfidenceService = new UniqueConfidenceService();
-            readingLevelConfidenceService = new ReadingLevelConfidenceService();
-            conversationPathService = new ConversationPathService();
+            _subjectConfidenceService = subjectConfidenceService;
+            _matchConfidenceService = matchConfidenceService;
+            _groupChatConfidenceService = groupChatConfidenceService;
+            _uniqueConfidenceService = uniqueConfidenceService;
+            _readingLevelConfidenceService = readingLevelConfidenceService;
+            _conversationPathService = conversationPathService;
         }
 
         public List<AnalyzedChat> GetResponseChat(List<MatchChat> conversation, int targetIndex) //TODO: pre-calculation this as part of the naturalLanguageData
@@ -67,10 +65,10 @@ namespace ConversationMatcher.Services
                 var nld = targetConversation.responses.Last().naturalLanguageData;
                 foreach (var subject in nld.subjects)
                 {
-                    subjectStarts.AddRange(subject.subjectWords);
+                    subjectStarts.Add(subject.Lemmas);
                 }
             }
-            return conversationPathService.GetPathsSubjects(subjectGoals, subjectStarts, conversationLists);
+            return _conversationPathService.GetPathsSubjects(subjectGoals, subjectStarts, conversationLists);
         }
 
         public List<ConversationMatchList> GetConversationMatchLists(Conversation targetConversation, List<ConversationList> conversationLists, List<string> subjectGoals)
@@ -94,8 +92,8 @@ namespace ConversationMatcher.Services
                             responses = new List<MatchChat>()
                         };
 
-                        var subjectMatchConfidence = subjectConfidenceService.getSubjectMatchConfidence(targetConversation, conversation);
-                        var readingLevelMatchConfidence = readingLevelConfidenceService.getReadingLevelConfidence(targetConversation.readingLevel, conversation.readingLevel);
+                        var subjectMatchConfidence = _subjectConfidenceService.GetSubjectMatchConfidence(targetConversation, conversation);
+                        var readingLevelMatchConfidence = _readingLevelConfidenceService.GetReadingLevelConfidence(targetConversation.readingLevel, conversation.readingLevel);
 
                         for(var index = 0; index < conversation.responses.Count(); index++)
                         {
@@ -140,26 +138,26 @@ namespace ConversationMatcher.Services
                 return matchChat;
             }
 
-            var uniqueConfidence = uniqueConfidenceService.getUniqueConfidence(userlessReply, targetConversation);
+            var uniqueConfidence = _uniqueConfidenceService.GetUniqueConfidence(userlessReply, targetConversation);
             var replyConfidence = existingResponse.naturalLanguageData.responseConfidence;
             var confidenceMultiplier = uniqueConfidence * replyConfidence;
 
-            var replyMatchConfidence = matchConfidenceService.getMatchConfidence(targetResponse.naturalLanguageData, existingResponse.naturalLanguageData, targetResponse.botName);
+            var replyMatchConfidence = _matchConfidenceService.GetMatchConfidence(targetResponse.naturalLanguageData, existingResponse.naturalLanguageData, targetResponse.botName);
             var replyPartScore = replyMatchConfidence * replyMatchRatio;
 
-            var conversationProximityScore = subjectConfidenceService.getConversationProximityMatchConfidence(targetResponse.naturalLanguageData.proximitySubjects, existingResponse.naturalLanguageData.proximitySubjects);
+            var conversationProximityScore = _subjectConfidenceService.GetConversationProximityMatchConfidence(targetResponse.naturalLanguageData.proximitySubjects, existingResponse.naturalLanguageData.proximitySubjects);
             var proximityPartScore = conversationProximityScore * conversationProximityRatio;
 
             var subjectMatchPartScore = subjectMatchConfidence * subjectMatchRatio;
 
             var readingLevelMatchPartScore = readingLevelMatchConfidence * readingLevelMatchRatio;
 
-            var groupChatMatchConfidence = groupChatConfidenceService.getGroupChatConfidence(targetConversation.groupChat, existingGroupChat);
+            var groupChatMatchConfidence = _groupChatConfidenceService.GetGroupChatConfidence(targetConversation.groupChat, existingGroupChat);
             var groupChatPartScore = groupChatMatchConfidence * groupChatRatio;
 
             var confidence = (replyPartScore + proximityPartScore + subjectMatchPartScore + readingLevelMatchPartScore + groupChatPartScore) * confidenceMultiplier;
 
-            var length = targetResponse.naturalLanguageData.sentences.SelectMany(s => s.tokens).Count();
+            var length = targetResponse.naturalLanguageData.sentences.SelectMany(s => s.Tokens).Count();
             if(length < 5)
             {
                 var exponent = 6 - length;
@@ -179,7 +177,7 @@ namespace ConversationMatcher.Services
         {
             foreach(var conversationSubjects in existingResponse.naturalLanguageData.subjects)
             {
-                if(conversationSubjects.subjectWords.Any(sw => pathSubjects.Contains(sw)))
+                if(pathSubjects.Contains(conversationSubjects.Lemmas))
                 {
                     return goalBonus;
                 }

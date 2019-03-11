@@ -5,7 +5,7 @@ namespace ConversationMatcher.Services
 {
     public class UniqueConfidenceService
     {
-        public double getUniqueConfidence(string responseWithoutUsers, Conversation conversation)
+        public double GetUniqueConfidence(string responseWithoutUsers, Conversation conversation)
         {
             var maxConfidence = 1.0;
 

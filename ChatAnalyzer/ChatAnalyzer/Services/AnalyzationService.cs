@@ -3,29 +3,32 @@ using ChatModels;
 using NaturalLanguageService.Services;
 using SharkbotConfiguration;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChatAnalyzer.Services
 {
     public class AnalyzationService
     {
-        private ConversationSubjectService conversationSubjectService;
-        private ResponseAnalyzationService responseAnalyzationService;
-        private ConversationTypeService conversationTypeService;
-        private UserlessMessageService userlessMessageService;
-        private ConversationReadingLevelService conversationReadingLevelService;
-        private ResponseSubjectService responseSubjectService;
+        private readonly ConversationSubjectService _conversationSubjectService;
+        private readonly ResponseAnalyzationService _responseAnalyzationService;
+        private readonly ConversationTypeService _conversationTypeService;
+        private readonly UserlessMessageService _userlessMessageService;
+        private readonly ConversationReadingLevelService _conversationReadingLevelService;
+        private readonly ResponseSubjectService _responseSubjectService;
+        private readonly NaturalLanguageApiService _naturalLanguageApiService;
 
-        public AnalyzationService()
+        public AnalyzationService(ConversationSubjectService conversationSubjectService, ResponseAnalyzationService responseAnalyzationService, ConversationTypeService conversationTypeService, UserlessMessageService userlessMessageService, ConversationReadingLevelService conversationReadingLevelService, ResponseSubjectService responseSubjectService, NaturalLanguageApiService naturalLanguageApiService)
         {
-            conversationSubjectService = new ConversationSubjectService();
-            responseAnalyzationService = new ResponseAnalyzationService();
-            conversationTypeService = new ConversationTypeService();
-            userlessMessageService = new UserlessMessageService();
-            conversationReadingLevelService = new ConversationReadingLevelService();
-            responseSubjectService = new ResponseSubjectService();
+            _conversationSubjectService = conversationSubjectService;
+            _responseAnalyzationService = responseAnalyzationService;
+            _conversationTypeService =conversationTypeService;
+            _userlessMessageService = userlessMessageService;
+            _conversationReadingLevelService =conversationReadingLevelService;
+            _responseSubjectService = responseSubjectService;
+            _naturalLanguageApiService = naturalLanguageApiService;
         }
 
-        public Conversation AnalyzeConversation(Conversation conversation)
+        public Conversation AnalyzeConversationAsync(Conversation conversation)
         {
             var users = conversation.responses.Select(r => r.chat.user).Distinct().ToList();
 
@@ -39,12 +42,18 @@ namespace ChatAnalyzer.Services
                 {
                     response.chat.message = " ";
                 }
-                response.naturalLanguageData = NaturalLanguageService.NaturalLanguageService.AnalyzeMessage(response.chat);
-                response.naturalLanguageData.userlessMessage = userlessMessageService.GetMessageWithoutUsers(response.chat.message, users);
-                response.naturalLanguageData.subjects = responseSubjectService.GetSubjects(response);
+                if(response.naturalLanguageData == null || response.naturalLanguageData.AnalyzationVersion != ConfigurationService.AnalyzationVersion)
+                {
+                    response.naturalLanguageData = new NaturalLanguageData { AnalyzationVersion = ConfigurationService.AnalyzationVersion };
+                    var result = Task.Run(async () => await _naturalLanguageApiService.AnalyzeMessageAsync(response.chat.message)).ConfigureAwait(false);
+                    response.naturalLanguageData.sentences = result.GetAwaiter().GetResult();
+                }
+
+                response.naturalLanguageData.userlessMessage = _userlessMessageService.GetMessageWithoutUsers(response.chat.message, users);
+                response.naturalLanguageData.subjects = _responseSubjectService.GetSubjects(response);
             }
 
-            conversation.groupChat = conversationTypeService.GetConversationGroupChatType(conversation.responses);
+            conversation.groupChat = _conversationTypeService.GetConversationGroupChatType(conversation.responses);
 
             for (var index = 0; index < conversation.responses.Count; index++)
             {
@@ -53,19 +62,19 @@ namespace ChatAnalyzer.Services
                 if (conversation.responses.Count > index + 1)
                 {
                     var nextResponse = conversation.responses[index + 1];
-                    if (responseAnalyzationService.MessageHasUsableResponse(conversation.responses[index].chat, nextResponse.chat))
+                    if (_responseAnalyzationService.MessageHasUsableResponse(conversation.responses[index].chat, nextResponse.chat))
                     {
-                        conversation.responses[index].naturalLanguageData.responseConfidence = responseAnalyzationService.getReplyConfidence(conversation.responses[index], nextResponse, UserDatabase.UserDatabase.userDatabase, conversation.groupChat);
+                        conversation.responses[index].naturalLanguageData.responseConfidence = _responseAnalyzationService.GetReplyConfidence(conversation.responses[index], nextResponse, UserDatabase.UserDatabase.userDatabase, conversation.groupChat);
                         conversation.responses[index].naturalLanguageData.responseSubjects = nextResponse.naturalLanguageData.subjects;
                     }
                 }
 
-                conversation.responses[index].naturalLanguageData.proximitySubjects = conversationSubjectService.GetProximitySubjects(conversation, index);
+                conversation.responses[index].naturalLanguageData.proximitySubjects = _conversationSubjectService.GetProximitySubjects(conversation, index);
             }
 
-            conversation.subjects = conversationSubjectService.GetConversationSubjects(conversation.responses);
+            conversation.subjects = _conversationSubjectService.GetConversationSubjects(conversation.responses);
 
-            conversation.readingLevel = conversationReadingLevelService.GetReadingLevel(conversation.responses);
+            conversation.readingLevel = _conversationReadingLevelService.GetReadingLevel(conversation.responses);
 
             conversation.analyzationVersion = ConfigurationService.AnalyzationVersion;
 

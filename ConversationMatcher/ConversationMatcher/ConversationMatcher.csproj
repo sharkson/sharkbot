@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ChatModels\ChatModels\ChatModels.csproj" />
     <ProjectReference Include="..\..\NaturalLanguageService\NaturalLanguageService\NaturalLanguageService.csproj" />
     <ProjectReference Include="..\..\SharkbotApi\ConversationSteerService\ConversationSteerService.csproj" />
   </ItemGroup>

@@ -18,17 +18,11 @@ namespace ConversationSteerService.Services
                     {
                         foreach (var conversationSubject in response.naturalLanguageData.subjects)
                         {
-                            foreach (var subject in conversationSubject.subjectWords)
+                            if (response.naturalLanguageData.responseSubjects != null)
                             {
-                                if (response.naturalLanguageData.responseSubjects != null)
+                                foreach (var responseConversationSubject in response.naturalLanguageData.responseSubjects)
                                 {
-                                    foreach (var responseConversationSubject in response.naturalLanguageData.responseSubjects)
-                                    {
-                                        foreach (var responseSubject in responseConversationSubject.subjectWords)
-                                        {
-                                            edges.Add(Tuple.Create(subject, responseSubject));
-                                        }
-                                    }
+                                    edges.Add(Tuple.Create(conversationSubject.Lemmas, responseConversationSubject.Lemmas));
                                 }
                             }
                         }

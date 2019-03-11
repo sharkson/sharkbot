@@ -1,6 +1,5 @@
 ﻿using ChatModels;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ChatAnalyzer.Services
@@ -30,8 +29,9 @@ namespace ChatAnalyzer.Services
         private double wordsReadPerSecond = 6;
         private double wordsTypedPerSecond = 2.5;
         private double maximumResponseTime = 60;
+        private double minimumResponseTime = 1;
 
-        public double getReplyConfidence(AnalyzedChat chat, AnalyzedChat response, ConcurrentBag<UserData> users, bool groupChat)
+        public double GetReplyConfidence(AnalyzedChat chat, AnalyzedChat response, ConcurrentBag<UserData> users, bool groupChat)
         {
             var maxConfidence = 1.0;
 
@@ -56,19 +56,29 @@ namespace ChatAnalyzer.Services
                 return maxConfidence;
             }
 
-            var wordCount = chat.naturalLanguageData.sentences.Sum(s => s.tokens.Count);
+            var wordCount = chat.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
             var readTimeMilliseconds = (wordCount / wordsReadPerSecond) * 1000.0;
 
-            var responseWordCount = response.naturalLanguageData.sentences.Sum(s => s.tokens.Count);
+            var responseWordCount = response.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
             var responseTimeMilliseconds = (responseWordCount / wordsTypedPerSecond) * 1000.0;
 
             var targetTime = readTimeMilliseconds + responseTimeMilliseconds;
             var actualTime = response.chat.time - chat.chat.time;
 
             var difference = actualTime - targetTime;
+
+            if(difference < 0) //response too fast
+            {
+                if(actualTime > (minimumResponseTime * 1000))
+                {
+                    return maxConfidence * .5;
+                }
+                return 0;
+            }
+
             if (difference > 0)
             {
-                if (difference > (maximumResponseTime * 1000))
+                if (difference > (maximumResponseTime * 1000)) //response too slow
                 {
                     if (response.chat.message.ToLower().Contains(chat.chat.user.ToLower()))
                     {

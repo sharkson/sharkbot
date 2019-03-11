@@ -10,22 +10,22 @@ namespace SharkbotApi.Controllers
     [EnableCors("AllowSpecificOrigin")]
     public class ChatUpdateController : Controller
     {
-        QueueService queueService;
-        ChatRequestValidationService requestValidationService;
+        private readonly QueueService _queueService;
+        private readonly ChatRequestValidationService _requestValidationService;
 
-        public ChatUpdateController()
+        public ChatUpdateController(ChatRequestValidationService requestValidationService, QueueService queueService)
         {
-            queueService = new QueueService();
-            requestValidationService = new ChatRequestValidationService();
+            _requestValidationService = requestValidationService;
+            _queueService = queueService;
         }
 
         [HttpPut]
         public bool Put([FromBody]ChatRequest chat)
         {
-            if (requestValidationService.ValidRequest(chat))
+            if (_requestValidationService.ValidRequest(chat))
             {
                 chat.requestTime = DateTime.Now;
-                return queueService.UpdateConversation(chat);
+                return _queueService.UpdateConversation(chat);
             }
             return false;
         }

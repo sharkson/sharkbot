@@ -3,9 +3,7 @@ using ChatModels;
 using Newtonsoft.Json;
 using SharkbotConfiguration;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,12 +12,12 @@ namespace ConversationDatabase.Services
     public class ConversationLoadService
     {
         private readonly string _databaseDirectory;
-        private AnalyzationService analyzationService;
+        private readonly AnalyzationService _analyzationService;
 
-        public ConversationLoadService(string databaseDirectory)
+        public ConversationLoadService(string databaseDirectory, AnalyzationService analyzationService)
         {
             _databaseDirectory = databaseDirectory;
-            analyzationService = new AnalyzationService();
+            _analyzationService = analyzationService;
         }
 
         public ConcurrentDictionary<string, ConversationList> LoadConversations()
@@ -39,7 +37,7 @@ namespace ConversationDatabase.Services
                 {
                     if (conversation.Value.analyzationVersion != analyzationVersion)
                     {
-                        var analyzedConversation = analyzationService.AnalyzeConversation(conversation.Value);
+                        var analyzedConversation = _analyzationService.AnalyzeConversationAsync(conversation.Value);
                         conversationLists[conversationList.Key].conversations[conversation.Key] = analyzedConversation;
                         var json = JsonConvert.SerializeObject(analyzedConversation);
                         File.WriteAllText(_databaseDirectory + "\\" + conversationList.Value.type + "\\" + analyzedConversation.name + ".json", json, Encoding.Unicode);

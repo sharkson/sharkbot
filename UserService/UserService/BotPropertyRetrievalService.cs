@@ -6,15 +6,15 @@ namespace UserService
 {
     public class BotPropertyRetrievalService
     {
-        private BotSelfPropertyRetrievalService botSelfPropertyRetrievalService;
-        private UserNaturalLanguageService userNaturalLanguageService;
-        private PropertyValueService propertyValueService;
+        private readonly BotSelfPropertyRetrievalService _botSelfPropertyRetrievalService;
+        private readonly UserNaturalLanguageService _userNaturalLanguageService;
+        private readonly PropertyValueService _propertyValueService;
 
-        public BotPropertyRetrievalService()
+        public BotPropertyRetrievalService(BotSelfPropertyRetrievalService botSelfPropertyRetrievalService, UserNaturalLanguageService userNaturalLanguageService, PropertyValueService propertyValueService)
         {
-            botSelfPropertyRetrievalService = new BotSelfPropertyRetrievalService();
-            userNaturalLanguageService = new UserNaturalLanguageService();
-            propertyValueService = new PropertyValueService();
+            _botSelfPropertyRetrievalService = botSelfPropertyRetrievalService;
+            _userNaturalLanguageService = userNaturalLanguageService;
+            _propertyValueService = propertyValueService;
         }
 
         public ChatResponse GetPropertyResponse(AnalyzedChat analyzedChat, UserData userData)
@@ -22,7 +22,7 @@ namespace UserService
             var requestedPropertyName = getRequestedPropertyName(analyzedChat);
             if (!string.IsNullOrEmpty(requestedPropertyName))
             {
-                var requestedProperty = propertyValueService.getPropertyByValue(requestedPropertyName, userData);
+                var requestedProperty = _propertyValueService.getPropertyByValue(requestedPropertyName, userData);
                 if (!string.IsNullOrEmpty(requestedProperty.value))
                 {
                     var confidence = 1.0;
@@ -35,7 +35,7 @@ namespace UserService
                     return new ChatResponse { confidence = confidence, response = response };
                 }
             }
-            return botSelfPropertyRetrievalService.GetPropertyResponse(analyzedChat, userData);
+            return _botSelfPropertyRetrievalService.GetPropertyResponse(analyzedChat, userData);
         }
 
         private List<string> propertySearch = new List<string>() { "is your (\\p{L}*)", "are your (\\p{L}*)" };
@@ -44,7 +44,7 @@ namespace UserService
             foreach (var regex in propertySearch)
             {
                 var match = getPropertyMatch(analyzedChat.chat.message, regex);
-                if (!string.IsNullOrWhiteSpace(match) && userNaturalLanguageService.isNaturalLanguagePropertyName(analyzedChat, match))
+                if (!string.IsNullOrWhiteSpace(match) && _userNaturalLanguageService.isNaturalLanguagePropertyName(analyzedChat, match))
                 {
                     return match;
                 }

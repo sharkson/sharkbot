@@ -46,7 +46,7 @@ namespace UserService
             }
 
             var nickName = analyzedChat.naturalLanguageData.userlessMessage.Trim();
-            if (!nickName.Contains(" ") && analyzedChat.naturalLanguageData.sentences.Count > 0 && !analyzedChat.naturalLanguageData.sentences[0].interrogative)
+            if (!nickName.Contains(" ") && analyzedChat.naturalLanguageData.sentences.Count > 0 && analyzedChat.naturalLanguageData.sentences[0].SentenceType == SentenceType.Interrogative )
             {
                 if(isNaturalLanguageName(analyzedChat, nickName))
                 {
@@ -77,11 +77,11 @@ namespace UserService
         {
             foreach (var sentence in chat.naturalLanguageData.sentences)
             {
-                foreach (var token in sentence.tokens)
+                foreach (var token in sentence.Tokens)
                 {
-                    if (token.Lexeme == match)
+                    if (token.Word == match) //TODO: use ner tag to see if person
                     {
-                        return token.POSTag == "NN" || token.POSTag == "NNP" || token.POSTag == "VBG";
+                        return token.PosTag == "NN" || token.PosTag == "NNP" || token.PosTag == "VBG";
                     }
                 }
             }

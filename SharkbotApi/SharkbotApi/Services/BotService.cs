@@ -9,35 +9,35 @@ namespace SharkbotApi.Services
 {
     public class BotService
     {
-        private ConversationService conversationService;
-        private AnalyzationService analyzationService;
-        private ResponseService responseService;
-        private ConversationUpdateService covnersationUpdateService;
-        private UserService.UserService userService;
-        private UpdateDatabasesService updateDatabasesService;
+        private readonly ConversationService _conversationService;
+        private readonly AnalyzationService _analyzationService;
+        private readonly ResponseService _responseService;
+        private readonly ConversationUpdateService _covnersationUpdateService;
+        private readonly UserService.UserService _userService;
+        private readonly UpdateDatabasesService _updateDatabasesService;
 
-        public BotService()
+        public BotService(ConversationService conversationService, AnalyzationService analyzationService, ResponseService responseService, ConversationUpdateService conversationUpdateService, UserService.UserService userService, UpdateDatabasesService updateDatabasesService)
         {
-            conversationService = new ConversationService();
-            analyzationService = new AnalyzationService();
-            responseService = new ResponseService();
-            covnersationUpdateService = new ConversationUpdateService();
-            userService = new UserService.UserService();
-            updateDatabasesService = new UpdateDatabasesService();
+            _conversationService = conversationService;
+            _analyzationService = analyzationService;
+            _responseService = responseService;
+            _covnersationUpdateService = conversationUpdateService;
+            _userService = userService;
+            _updateDatabasesService = updateDatabasesService;
         }
 
         public ChatResponse ProcessChat(ChatRequest chat)
         {
-            var conversation = conversationService.GetConversation(chat);
-            var analyzedConversation = analyzationService.AnalyzeConversation(conversation);
-            var conversationUdpdated = covnersationUpdateService.UpdateConversation(analyzedConversation, chat.type);
+            var conversation = _conversationService.GetConversation(chat);
+            var analyzedConversation = _analyzationService.AnalyzeConversationAsync(conversation);
+            var conversationUdpdated = _covnersationUpdateService.UpdateConversation(analyzedConversation, chat.type);
 
             AnalyzedChat inResponseTo = null;
             if (analyzedConversation.responses.Count() > 1)
             {
                 inResponseTo = analyzedConversation.responses[analyzedConversation.responses.Count() - 2];
             }
-            userService.UpdateUsers(analyzedConversation.responses.Last(), inResponseTo);
+            _userService.UpdateUsers(analyzedConversation.responses.Last(), inResponseTo);
 
             return GetChatResponse(conversation, chat.exclusiveTypes, chat.requiredProperyMatches, chat.excludedTypes, chat.subjectGoals);
         }
@@ -47,11 +47,11 @@ namespace SharkbotApi.Services
             ChatResponse response;
             if ((exclusiveTypes != null && exclusiveTypes.Count > 0) || (requiredProperyMatches != null && requiredProperyMatches.Count > 0))
             {
-                response = responseService.GetResponse(conversation, exclusiveTypes, requiredProperyMatches, excludedTypes, subjectGoals);
+                response = _responseService.GetResponse(conversation, exclusiveTypes, requiredProperyMatches, excludedTypes, subjectGoals);
             }
             else
             {
-                response = responseService.GetResponse(conversation, excludedTypes, subjectGoals);
+                response = _responseService.GetResponse(conversation, excludedTypes, subjectGoals);
             }
 
             return response;

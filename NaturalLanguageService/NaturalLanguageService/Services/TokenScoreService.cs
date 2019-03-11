@@ -1,23 +1,24 @@
 ﻿using ChatModels;
 using System.Collections.Generic;
 
-namespace ConversationMatcher.Services
+namespace NaturalLanguageService.Services
 {
     public class TokenScoreService
     {
-        public double getTokenValue(Token token)
+        public double GetScore(List<Token> targetTokens, List<Token> existingTokens)
         {
-            var tagScore = NaturalLanguageService.NaturalLanguageService.POSTagValues[token.POSTag];
-            if(tagScore != null)
+            var score = 0.0;
+            foreach (var token in targetTokens)
             {
-                return tagScore;
+                score += GetBestTokenScore(token, existingTokens);
             }
-            return 0;
+            var maxScore = GetMaxScore(targetTokens);
+            return score / maxScore;
         }
 
-        public double getTokenScore(Token targetToken, List<Token> tokens)
+        private double GetBestTokenScore(Token targetToken, List<Token> tokens)
         {
-            var tokenValue = getTokenValue(targetToken);
+            var tokenValue = GetTokenValue(targetToken);
 
             var bestScore = 0.0;
 
@@ -25,9 +26,9 @@ namespace ConversationMatcher.Services
             {
                 var tokenScore = 0.0;
 
-                if (token.Lexeme.ToLower() == targetToken.Lexeme.ToLower())
+                if (token.Word.ToLower() == targetToken.Word.ToLower())
                 {
-                    if (token.POSTag == targetToken.POSTag)
+                    if (token.PosTag == targetToken.PosTag)
                     {
                         tokenScore = tokenValue;
                     }
@@ -36,7 +37,7 @@ namespace ConversationMatcher.Services
                         tokenScore = .75 * tokenValue;
                     }
                 }
-                else if(token.Stem == targetToken.Stem)
+                else if(token.Lemmas.ToLower() == targetToken.Lemmas.ToLower())
                 {
                     tokenScore = .75 * tokenValue;
                 }
@@ -50,16 +51,43 @@ namespace ConversationMatcher.Services
             return bestScore;
         }
 
-        public double getTokenScore(Token targetToken, List<Sentence> sentences)
+        private double GetMaxScore(List<Token> tokens)
         {
-            var tokens = new List<Token>();
-
-            foreach (var sentence in sentences)
+            var score = 0.0;
+            foreach (var token in tokens)
             {
-                tokens.AddRange(sentence.tokens);
+                score += GetTokenValue(token);
             }
+            return score;
+        }
 
-            return getTokenScore(targetToken, tokens);
+        private double GetTokenValue(Token token)
+        {
+            if (token.PosTag.StartsWith("JJ"))
+            {
+                return 0.5;
+            }
+            if (token.PosTag.StartsWith("NN"))
+            {
+                return 2;
+            }
+            if (token.PosTag.StartsWith("PRP"))
+            {
+                return 0.2;
+            }
+            if (token.PosTag.StartsWith("RB"))
+            {
+                return 0.2;
+            }
+            if (token.PosTag.StartsWith("VB"))
+            {
+                return 0.2;
+            }
+            if (token.PosTag.StartsWith("WP"))
+            {
+                return 0.2;
+            }
+            return 0.1;
         }
     }
 }

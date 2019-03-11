@@ -6,11 +6,11 @@ namespace ChatAnalyzer.Services
 {
     public class ConversationSubjectService
     {
-        public ResponseSubjectService responseSubjectService;
+        private readonly ResponseSubjectService _responseSubjectService;
 
-        public ConversationSubjectService()
+        public ConversationSubjectService(ResponseSubjectService responseSubjectService)
         {
-            responseSubjectService = new ResponseSubjectService();
+            _responseSubjectService = responseSubjectService;
         }
 
         public List<ConversationSubject> GetConversationSubjects(List<AnalyzedChat> responses)
@@ -19,9 +19,17 @@ namespace ChatAnalyzer.Services
 
             foreach (var response in responses)
             {
-                if (!string.IsNullOrWhiteSpace(response.chat.message))
+                foreach(var subject in _responseSubjectService.GetSubjects(response))
                 {
-                    subjects.AddRange(responseSubjectService.GetSubjects(response));
+                    var subjectIndex = subjects.FindIndex(s => s.Lemmas == subject.Lemmas);
+                    if (subjectIndex > -1)
+                    {
+                        subjects[subjectIndex].OccurenceCount += subject.OccurenceCount;
+                    }
+                    else
+                    {
+                        subjects.Add(subject);
+                    }
                 }
             }
 

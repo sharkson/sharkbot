@@ -8,13 +8,13 @@ namespace UserService
 {
     public class UserSelfPropertyRetrievalService
     {
-        private UserNaturalLanguageService userNaturalLanguageService;
-        private PropertyValueService propertyValueService;
+        private readonly UserNaturalLanguageService _userNaturalLanguageService;
+        private readonly PropertyValueService _propertyValueService;
 
-        public UserSelfPropertyRetrievalService()
+        public UserSelfPropertyRetrievalService(UserNaturalLanguageService userNaturalLanguageService, PropertyValueService propertyValueService)
         {
-            userNaturalLanguageService = new UserNaturalLanguageService();
-            propertyValueService = new PropertyValueService();
+            _userNaturalLanguageService = userNaturalLanguageService;
+            _propertyValueService = propertyValueService;
         }
 
         public ChatResponse GetYourPropertyResponse(AnalyzedChat analyzedChat, UserData userData)
@@ -22,7 +22,7 @@ namespace UserService
             var requestedPropertyName = getRequestedProperty(analyzedChat);
             if (!string.IsNullOrEmpty(requestedPropertyName))
             {
-                var requestedProperty = propertyValueService.getSelfPropertyByValue(requestedPropertyName, userData);
+                var requestedProperty = _propertyValueService.getSelfPropertyByValue(requestedPropertyName, userData);
                 if (!string.IsNullOrEmpty(requestedProperty.value))
                 {
                     var confidence = 1.0;
@@ -44,7 +44,7 @@ namespace UserService
             foreach (var regex in selfPropertySearch)
             {
                 var match = getPropertyMatch(analyzedChat.chat.message, regex);
-                if (!string.IsNullOrWhiteSpace(match) && userNaturalLanguageService.isNaturalLanguageSelfProperty(analyzedChat, match))
+                if (!string.IsNullOrWhiteSpace(match) && _userNaturalLanguageService.isNaturalLanguageSelfProperty(analyzedChat, match))
                 {
                     return match;
                 }
@@ -91,7 +91,7 @@ namespace UserService
             foreach (var regex in otherPropertySearch)
             {
                 var match = getOtherPropertyMatch(analyzedChat.chat.message, regex);
-                if (!string.IsNullOrWhiteSpace(match.name) && !string.IsNullOrWhiteSpace(match.value) && userNaturalLanguageService.isNaturalLanguageSelfProperty(analyzedChat, match.value))
+                if (!string.IsNullOrWhiteSpace(match.name) && !string.IsNullOrWhiteSpace(match.value) && _userNaturalLanguageService.isNaturalLanguageSelfProperty(analyzedChat, match.value))
                 {
                     var userMatches = users.Where(u => "@" + u.userName == match.name || u.userName == match.name);
                     if (userMatches.Count() == 0)

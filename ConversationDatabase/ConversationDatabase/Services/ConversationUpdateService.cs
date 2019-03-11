@@ -1,17 +1,15 @@
 ﻿using ChatModels;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ConversationDatabase.Services
 {
     public class ConversationUpdateService
     {
-        private ConversationSaveService conversationSaveService;
+        private readonly ConversationSaveService _conversationSaveService;
 
-        public ConversationUpdateService()
+        public ConversationUpdateService(ConversationSaveService conversationSaveService)
         {
-            conversationSaveService = new ConversationSaveService();
+            _conversationSaveService = conversationSaveService;
         }
 
         public bool UpdateConversation(Conversation conversation, string type)
@@ -32,7 +30,7 @@ namespace ConversationDatabase.Services
                 ConversationDatabase.conversationDatabase[type] = list;
             }
 
-            conversationSaveService.SaveConversation(conversation, type);
+            _conversationSaveService.SaveConversation(conversation, type);
 
             return true;
         }

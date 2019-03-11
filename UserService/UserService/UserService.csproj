@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ChatModels\ChatModels\ChatModels.csproj" />
     <ProjectReference Include="..\..\UserDatabase\UserDatabase\UserDatabase.csproj" />
   </ItemGroup>
 

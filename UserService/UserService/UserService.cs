@@ -1,5 +1,4 @@
 ﻿using ChatModels;
-using System.Collections.Generic;
 using System.Linq;
 using UserDatabase.Services;
 
@@ -7,26 +6,26 @@ namespace UserService
 {
     public class UserService
     {
-        private UserNickNameService userNickNameService;
-        private UserPropertyService userPropertyService;
-        private OtherUserPropertyService otherUserPropertyService;
-        private UserDerivedPropertyService userDerivedPropertyService;
-        private UserSaveService userSaveService;
+        private readonly UserNickNameService _userNickNameService;
+        private readonly UserPropertyService _userPropertyService;
+        private readonly OtherUserPropertyService _otherUserPropertyService;
+        private readonly UserDerivedPropertyService _userDerivedPropertyService;
+        private readonly UserSaveService _userSaveService;
 
-        public UserService()
+        public UserService(UserNickNameService userNickNameService, UserPropertyService userPropertyService, OtherUserPropertyService otherUserPropertyService, UserDerivedPropertyService userDerivedPropertyService, UserSaveService userSaveService)
         {
-            userNickNameService = new UserNickNameService();
-            userPropertyService = new UserPropertyService();
-            otherUserPropertyService = new OtherUserPropertyService();
-            userDerivedPropertyService = new UserDerivedPropertyService();
-            userSaveService = new UserSaveService();
+            _userNickNameService = userNickNameService;
+            _userPropertyService = userPropertyService;
+            _otherUserPropertyService = otherUserPropertyService;
+            _userDerivedPropertyService =userDerivedPropertyService;
+            _userSaveService = userSaveService;
         }
 
         public void UpdateUsers(AnalyzedChat userResponse, AnalyzedChat question)
         {
-            var nickName = userNickNameService.GetNickName(userResponse, question);
+            var nickName = _userNickNameService.GetNickName(userResponse, question);
             //TODO: remove nickname ex. "don't call me XXX"
-            var property = userPropertyService.GetProperty(userResponse, question);
+            var property = _userPropertyService.GetProperty(userResponse, question);
 
             var userData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(ud => ud != null && ud.userName != null && ud.userName == userResponse.chat.user);
             if (userData != null)
@@ -42,9 +41,9 @@ namespace UserService
                 {
                     userData.properties.Add(property);
                 }
-                userData.derivedProperties.AddRange(userDerivedPropertyService.GetDerivedProperties(userResponse, property, userData));
+                userData.derivedProperties.AddRange(_userDerivedPropertyService.GetDerivedProperties(userResponse, property, userData));
 
-                userSaveService.SaveUserData(userData);
+                _userSaveService.SaveUserData(userData);
             }
             else
             {
@@ -58,14 +57,14 @@ namespace UserService
                             userData.nickNames.Add(nickName);
                         }
                     }
-                    userData.derivedProperties.AddRange(userDerivedPropertyService.GetDerivedProperties(userResponse, property, userData));
+                    userData.derivedProperties.AddRange(_userDerivedPropertyService.GetDerivedProperties(userResponse, property, userData));
 
                     UserDatabase.UserDatabase.userDatabase.Add(userData);
-                    userSaveService.SaveUserData(userData);
+                    _userSaveService.SaveUserData(userData);
                 }
             }
 
-            var otherUserProperty = otherUserPropertyService.GetOtherUserProperty(userResponse, UserDatabase.UserDatabase.userDatabase);
+            var otherUserProperty = _otherUserPropertyService.GetOtherUserProperty(userResponse, UserDatabase.UserDatabase.userDatabase);
             userData = UserDatabase.UserDatabase.userDatabase.FirstOrDefault(ud => ud != null && ud.userName != null && ud.userName == otherUserProperty.userName);
             if (userData == null)
             {
@@ -77,7 +76,7 @@ namespace UserService
                 {
                     userData.properties.Add(otherUserProperty.userProperty);
                 }
-                userSaveService.SaveUserData(userData);
+                _userSaveService.SaveUserData(userData);
             }
         }
     }

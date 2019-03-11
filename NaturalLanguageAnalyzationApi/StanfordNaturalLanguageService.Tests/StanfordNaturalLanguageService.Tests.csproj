@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\xunit.runner.visualstudio.2.4.1\build\net20\xunit.runner.visualstudio.props" Condition="Exists('..\packages\xunit.runner.visualstudio.2.4.1\build\net20\xunit.runner.visualstudio.props')" />
+  <Import Project="..\packages\xunit.core.2.4.1\build\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.4.1\build\xunit.core.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CB738D65-EC1A-4394-BCB1-BB425F2B28FC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>StanfordNaturalLanguageService.Tests</RootNamespace>
+    <AssemblyName>StanfordNaturalLanguageService.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IKVM.OpenJDK.Core, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58" />
+    <Reference Include="SimpleNetNlp, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleNetNlp.3.8.0\lib\SimpleNetNlp.dll</HintPath>
+    </Reference>
+    <Reference Include="stanford-corenlp-3.9.1, Version=3.9.1.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="VaderSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CodingUpAStorm.VaderSharp.1.0.4\lib\net35\VaderSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.abstractions.2.0.3\lib\net35\xunit.abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.assert, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.assert.2.4.1\lib\netstandard1.1\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.core.2.4.1\lib\net452\xunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.execution.desktop, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.execution.2.4.1\lib\net452\xunit.execution.desktop.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DeclarativeService_IsDeclarative.cs" />
+    <Compile Include="ExclamatoryService_IsExclamatory.cs" />
+    <Compile Include="ImperativeService_IsImperative.cs" />
+    <Compile Include="InterrogativeService_IsInterrogative.cs" />
+    <Compile Include="MessageAnalyzationService_AnalyzeMessage.cs" />
+    <Compile Include="ObjectService_GetObject.cs" />
+    <Compile Include="OpenieService_GetOpenieTriples.cs" />
+    <Compile Include="PredicateService_GetPredicate.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SentenceTypeService_GetSentenceType.cs" />
+    <Compile Include="SentimentAnalyzationService_GetSentiment.cs" />
+    <Compile Include="SubjectService_GetSubject.cs" />
+    <Compile Include="TokenService_GetTokens.cs" />
+    <Compile Include="VoiceService_GetVoice.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ChatModels\ChatModels\ChatModels.csproj">
+      <Project>{69508B6D-8FF4-4033-B5E8-37BFEE048127}</Project>
+      <Name>ChatModels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StanfordNaturalLanguageService\StanfordNaturalLanguageService.csproj">
+      <Project>{557d8e3b-b07e-46da-939c-f52f7b0fbeeb}</Project>
+      <Name>StanfordNaturalLanguageService</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="nlp-libs\ejml-0.23.dll" />
+    <Content Include="nlp-libs\IKVM.AWT.WinForms.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Beans.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Charsets.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Cldrdata.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Corba.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Core.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Jdbc.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Localedata.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Management.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Media.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Misc.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Naming.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Nashorn.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Remoting.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Security.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.SwingAWT.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Text.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Tools.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Util.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.API.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.Bind.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.Crypto.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.Parse.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.Transform.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.WebServices.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.XPath.dll" />
+    <Content Include="nlp-libs\IKVM.Runtime.dll" />
+    <Content Include="nlp-libs\IKVM.Runtime.JNI.dll" />
+    <Content Include="nlp-libs\javax.json.dll" />
+    <Content Include="nlp-libs\joda-time.dll" />
+    <Content Include="nlp-libs\jollyday.dll" />
+    <Content Include="nlp-libs\protobuf.dll" />
+    <Content Include="nlp-libs\slf4j-api.dll" />
+    <Content Include="nlp-libs\slf4j-simple.dll" />
+    <Content Include="nlp-libs\stanford-corenlp-3.8.0.dll" />
+    <Content Include="nlp-libs\xom.dll" />
+  </ItemGroup>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.props'))" />
+    <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.targets'))" />
+    <Error Condition="!Exists('..\packages\xunit.runner.visualstudio.2.4.1\build\net20\xunit.runner.visualstudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.visualstudio.2.4.1\build\net20\xunit.runner.visualstudio.props'))" />
+    <Error Condition="!Exists('..\packages\SimpleNetNlp.3.8.0\build\SimpleNetNlp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleNetNlp.3.8.0\build\SimpleNetNlp.targets'))" />
+  </Target>
+  <Import Project="..\packages\xunit.core.2.4.1\build\xunit.core.targets" Condition="Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" />
+  <Import Project="..\packages\SimpleNetNlp.3.8.0\build\SimpleNetNlp.targets" Condition="Exists('..\packages\SimpleNetNlp.3.8.0\build\SimpleNetNlp.targets')" />
+</Project>

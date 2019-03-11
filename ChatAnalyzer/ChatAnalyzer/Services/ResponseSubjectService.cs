@@ -1,6 +1,5 @@
 ﻿using ChatModels;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ChatAnalyzer.Services
 {
@@ -12,23 +11,22 @@ namespace ChatAnalyzer.Services
 
             foreach (var sentence in response.naturalLanguageData.sentences)
             {
-                foreach (var token in sentence.tokens)
+                var token = sentence.Subject;
+                if(token != null && !string.IsNullOrWhiteSpace(token.Lemmas))
                 {
-                    if (token.POSTag == "NN" || token.POSTag == "NNP" || token.POSTag == "NNS" || token.POSTag == "NNPS")
+                    var index = subjects.FindIndex(s => s.Lemmas == token.Lemmas);
+                    if (index >= 0)
                     {
-                        var index = subjects.FindIndex(s => s.subjectWords.Contains(token.Stem));
-                        if (index >= 0)
+                        subjects[index].OccurenceCount++;
+                    }
+                    else
+                    {
+                        var subject = new ConversationSubject
                         {
-                            subjects[index].occurenceCount++;
-                        }
-                        else
-                        {
-                            var subject = new ConversationSubject();
-                            subject.occurenceCount = 1;
-                            subject.subjectWords = new List<string>();
-                            subject.subjectWords.Add(token.Stem);
-                            subjects.Add(subject);
-                        }
+                            OccurenceCount = 1,
+                            Lemmas = token.Lemmas
+                        };
+                        subjects.Add(subject);
                     }
                 }
             }

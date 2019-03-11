@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CC82BFB7-5905-48CF-82A7-E072932BABDF}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>StanfordNaturalLanguageService</RootNamespace>
+    <AssemblyName>StanfordNaturalLanguageService</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IKVM.AWT.WinForms, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.AWT.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Beans, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Beans.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Charsets, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Charsets.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Cldrdata, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Cldrdata.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Corba, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Corba.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Core, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Jdbc, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Jdbc.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Localedata, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Localedata.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Management, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Management.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Media, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Media.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Misc, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Misc.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Naming, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Naming.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Nashorn, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Nashorn.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Remoting, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Remoting.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Security, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.SwingAWT, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.SwingAWT.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Text, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Tools, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Tools.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Util, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.XML.API, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.XML.API.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.XML.Bind, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.XML.Bind.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.XML.Crypto, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.XML.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.XML.Parse, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.XML.Parse.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.XML.Transform, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.XML.Transform.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.XML.WebServices, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.XML.WebServices.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.XML.XPath, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.OpenJDK.XML.XPath.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.Runtime, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.Runtime.JNI, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <HintPath>..\packages\IKVM.8.1.5717.0\lib\IKVM.Runtime.JNI.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleNetNlp, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleNetNlp.3.8.0\lib\SimpleNetNlp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="StanfordNaturalLanguageService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="nlp-models\lexparser\englishPCFG.ser.gz" />
+    <None Include="nlp-models\naturalli\affinities\obj.tab.gz" />
+    <None Include="nlp-models\naturalli\affinities\pp.tab.gz" />
+    <None Include="nlp-models\naturalli\affinities\subj_obj_pp.tab.gz" />
+    <None Include="nlp-models\naturalli\affinities\subj_pp.tab.gz" />
+    <None Include="nlp-models\naturalli\affinities\subj_pp_obj.tab.gz" />
+    <None Include="nlp-models\naturalli\affinities\subj_pp_pp.tab.gz" />
+    <None Include="nlp-models\naturalli\clauseSearcherModel.ser.gz" />
+    <None Include="nlp-models\ner\english.all.3class.distsim.crf.ser.gz" />
+    <None Include="nlp-models\ner\english.all.3class.distsim.prop" />
+    <None Include="nlp-models\ner\english.conll.4class.distsim.crf.ser.gz" />
+    <None Include="nlp-models\ner\english.conll.4class.distsim.prop" />
+    <None Include="nlp-models\ner\english.muc.7class.distsim.crf.ser.gz" />
+    <None Include="nlp-models\ner\english.muc.7class.distsim.prop" />
+    <None Include="nlp-models\ner\regexner.patterns" />
+    <None Include="nlp-models\parser\english_SD.gz" />
+    <None Include="nlp-models\parser\english_UD.gz" />
+    <None Include="nlp-models\pos\english-left3words-distsim.tagger" />
+    <None Include="nlp-models\pos\english-left3words-distsim.tagger.props" />
+    <None Include="nlp-models\sentiment\sentiment.ser.gz" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="nlp-libs\ejml-0.23.dll" />
+    <Content Include="nlp-libs\IKVM.AWT.WinForms.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Beans.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Charsets.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Cldrdata.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Corba.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Core.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Jdbc.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Localedata.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Management.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Media.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Misc.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Naming.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Nashorn.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Remoting.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Security.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.SwingAWT.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Text.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Tools.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.Util.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.API.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.Bind.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.Crypto.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.Parse.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.Transform.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.WebServices.dll" />
+    <Content Include="nlp-libs\IKVM.OpenJDK.XML.XPath.dll" />
+    <Content Include="nlp-libs\IKVM.Runtime.dll" />
+    <Content Include="nlp-libs\IKVM.Runtime.JNI.dll" />
+    <Content Include="nlp-libs\javax.json.dll" />
+    <Content Include="nlp-libs\joda-time.dll" />
+    <Content Include="nlp-libs\jollyday.dll" />
+    <Content Include="nlp-libs\protobuf.dll" />
+    <Content Include="nlp-libs\slf4j-api.dll" />
+    <Content Include="nlp-libs\slf4j-simple.dll" />
+    <Content Include="nlp-libs\stanford-corenlp-3.8.0.dll" />
+    <Content Include="nlp-libs\xom.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StandardChatModels\ChatModels.csproj">
+      <Project>{c5c61ea6-39ba-43ca-9f06-719ac9be6ca6}</Project>
+      <Name>ChatModels</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\SimpleNetNlp.3.8.0\build\SimpleNetNlp.targets" Condition="Exists('..\packages\SimpleNetNlp.3.8.0\build\SimpleNetNlp.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SimpleNetNlp.3.8.0\build\SimpleNetNlp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleNetNlp.3.8.0\build\SimpleNetNlp.targets'))" />
+    <Error Condition="!Exists('..\packages\SimpleNetNlp.Models.PosTagger.3.8.0\build\SimpleNetNlp.Models.PosTagger.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleNetNlp.Models.PosTagger.3.8.0\build\SimpleNetNlp.Models.PosTagger.targets'))" />
+    <Error Condition="!Exists('..\packages\SimpleNetNlp.Models.Parser.3.8.0\build\SimpleNetNlp.Models.Parser.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleNetNlp.Models.Parser.3.8.0\build\SimpleNetNlp.Models.Parser.targets'))" />
+    <Error Condition="!Exists('..\packages\SimpleNetNlp.Models.Ner.3.8.0\build\SimpleNetNlp.Models.Ner.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleNetNlp.Models.Ner.3.8.0\build\SimpleNetNlp.Models.Ner.targets'))" />
+    <Error Condition="!Exists('..\packages\SimpleNetNlp.Models.LexParser.3.8.0\build\SimpleNetNlp.Models.LexParser.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleNetNlp.Models.LexParser.3.8.0\build\SimpleNetNlp.Models.LexParser.targets'))" />
+    <Error Condition="!Exists('..\packages\SimpleNetNlp.Models.Sentiment.3.8.0\build\SimpleNetNlp.Models.Sentiment.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleNetNlp.Models.Sentiment.3.8.0\build\SimpleNetNlp.Models.Sentiment.targets'))" />
+    <Error Condition="!Exists('..\packages\SimpleNetNlp.Models.Naturalli.3.8.0.1\build\SimpleNetNlp.Models.Naturalli.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleNetNlp.Models.Naturalli.3.8.0.1\build\SimpleNetNlp.Models.Naturalli.targets'))" />
+  </Target>
+  <Import Project="..\packages\SimpleNetNlp.Models.PosTagger.3.8.0\build\SimpleNetNlp.Models.PosTagger.targets" Condition="Exists('..\packages\SimpleNetNlp.Models.PosTagger.3.8.0\build\SimpleNetNlp.Models.PosTagger.targets')" />
+  <Import Project="..\packages\SimpleNetNlp.Models.Parser.3.8.0\build\SimpleNetNlp.Models.Parser.targets" Condition="Exists('..\packages\SimpleNetNlp.Models.Parser.3.8.0\build\SimpleNetNlp.Models.Parser.targets')" />
+  <Import Project="..\packages\SimpleNetNlp.Models.Ner.3.8.0\build\SimpleNetNlp.Models.Ner.targets" Condition="Exists('..\packages\SimpleNetNlp.Models.Ner.3.8.0\build\SimpleNetNlp.Models.Ner.targets')" />
+  <Import Project="..\packages\SimpleNetNlp.Models.LexParser.3.8.0\build\SimpleNetNlp.Models.LexParser.targets" Condition="Exists('..\packages\SimpleNetNlp.Models.LexParser.3.8.0\build\SimpleNetNlp.Models.LexParser.targets')" />
+  <Import Project="..\packages\SimpleNetNlp.Models.Sentiment.3.8.0\build\SimpleNetNlp.Models.Sentiment.targets" Condition="Exists('..\packages\SimpleNetNlp.Models.Sentiment.3.8.0\build\SimpleNetNlp.Models.Sentiment.targets')" />
+  <Import Project="..\packages\SimpleNetNlp.Models.Naturalli.3.8.0.1\build\SimpleNetNlp.Models.Naturalli.targets" Condition="Exists('..\packages\SimpleNetNlp.Models.Naturalli.3.8.0.1\build\SimpleNetNlp.Models.Naturalli.targets')" />
+</Project>

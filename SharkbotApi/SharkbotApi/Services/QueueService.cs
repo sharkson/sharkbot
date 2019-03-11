@@ -8,18 +8,18 @@ namespace SharkbotApi.Services
 {
     public class QueueService
     {
-        BotService botService;
-        ConversationService conversationService;
-        private UpdateDatabasesService updateDatabasesService;
+        private readonly BotService _botService;
+        private readonly ConversationService _conversationService;
+        private readonly UpdateDatabasesService _updateDatabasesService;
 
-        int queueDelay = 500;
-        int maximumDelay = 10000;
+        private readonly int queueDelay = 500;
+        private readonly int maximumDelay = 10000;
 
-        public QueueService()
+        public QueueService(BotService botService, ConversationService conversationService, UpdateDatabasesService updateDatabasesService)
         {
-            botService = new BotService();
-            conversationService = new ConversationService();
-            updateDatabasesService = new UpdateDatabasesService();
+            _botService =botService;
+            _conversationService =conversationService;
+            _updateDatabasesService = updateDatabasesService;
         }
 
         public ChatResponse GetResponse(ResponseRequest responseRequest)
@@ -41,8 +41,8 @@ namespace SharkbotApi.Services
             {
                 if (peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
                 {
-                    var conversation = conversationService.GetConversation(responseRequest.conversationName, responseRequest.type);
-                    var response = botService.GetChatResponse(conversation, responseRequest.exclusiveTypes, responseRequest.requiredProperyMatches, responseRequest.excludedTypes, responseRequest.subjectGoals);
+                    var conversation = _conversationService.GetConversation(responseRequest.conversationName, responseRequest.type);
+                    var response = _botService.GetChatResponse(conversation, responseRequest.exclusiveTypes, responseRequest.requiredProperyMatches, responseRequest.excludedTypes, responseRequest.subjectGoals);
                     ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
 
                     return response;
@@ -71,7 +71,7 @@ namespace SharkbotApi.Services
             {
                 if (peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
                 {
-                    var updated = updateDatabasesService.UpdateDatabases(chat);
+                    var updated = _updateDatabasesService.UpdateDatabases(chat);
                     ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
 
                     return updated;
@@ -101,7 +101,7 @@ namespace SharkbotApi.Services
             {
                 if (peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
                 {
-                    var updated = updateDatabasesService.UpdateDatabases(conversationRequest);
+                    var updated = _updateDatabasesService.UpdateDatabases(conversationRequest);
                     ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
                     return updated;
                 }

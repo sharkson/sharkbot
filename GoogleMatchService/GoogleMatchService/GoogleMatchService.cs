@@ -10,13 +10,13 @@ namespace GoogleMatchService
 {
     public class GoogleMatchService
     {
-        private ScrapingBrowser browser;
+        private readonly ScrapingBrowser _browser;
         private const string searchUrl = "http://www.google.com/search?q=";
         private const double googleConfidence = .9;
 
-        public GoogleMatchService()
+        public GoogleMatchService(ScrapingBrowser scrapingBrowser)
         {
-            browser = new ScrapingBrowser();
+            _browser = scrapingBrowser;
             ignoreList = new List<string> { "how are you", "what is that", "how is it going" };
         }
 
@@ -43,7 +43,7 @@ namespace GoogleMatchService
         {
             try
             {
-                var searchResult = browser.NavigateToPage(new Uri(searchUrl + searchString));
+                var searchResult = _browser.NavigateToPage(new Uri(searchUrl + searchString));
 
                 if (DoTextSearch(searchString))
                 {

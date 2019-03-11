@@ -6,13 +6,13 @@ namespace UserService
 {
     public class BotSelfPropertyRetrievalService
     {
-        private PropertyValueService propertyValueService;
-        private UserNaturalLanguageService userNaturalLanguageService;
+        private readonly PropertyValueService _propertyValueService;
+        private readonly UserNaturalLanguageService _userNaturalLanguageService;
 
-        public BotSelfPropertyRetrievalService()
+        public BotSelfPropertyRetrievalService(PropertyValueService propertyValueService, UserNaturalLanguageService userNaturalLanguageService)
         {
-            propertyValueService = new PropertyValueService();
-            userNaturalLanguageService = new UserNaturalLanguageService();
+            _propertyValueService = propertyValueService;
+            _userNaturalLanguageService = userNaturalLanguageService;
         }
 
         public ChatResponse GetPropertyResponse(AnalyzedChat analyzedChat, UserData userData)
@@ -20,7 +20,7 @@ namespace UserService
             var requestedPropertyName = getRequestedProperty(analyzedChat);
             if (!string.IsNullOrEmpty(requestedPropertyName))
             {
-                var requestedProperty = propertyValueService.getSelfPropertyByValue(requestedPropertyName, userData);
+                var requestedProperty = _propertyValueService.getSelfPropertyByValue(requestedPropertyName, userData);
                 if (!string.IsNullOrEmpty(requestedProperty.value))
                 {
                     var confidence = 1.0;
@@ -42,7 +42,7 @@ namespace UserService
             foreach (var regex in propertySearch)
             {
                 var match = getPropertyMatch(analyzedChat.chat.message, regex);
-                if (!string.IsNullOrWhiteSpace(match) && userNaturalLanguageService.isNaturalLanguageSelfProperty(analyzedChat, match))
+                if (!string.IsNullOrWhiteSpace(match) && _userNaturalLanguageService.isNaturalLanguageSelfProperty(analyzedChat, match))
                 {
                     return match;
                 }

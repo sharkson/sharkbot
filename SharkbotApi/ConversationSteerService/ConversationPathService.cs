@@ -9,15 +9,15 @@ namespace ConversationSteerService
 {
     public class ConversationPathService
     {
-        EdgeService edgeService;
-        VerticeService verticeService;
-        ShortestPathService shortestPathService;
+        private readonly EdgeService _edgeService;
+        private readonly VerticeService _verticeService;
+        private readonly ShortestPathService _shortestPathService;
 
-        public ConversationPathService()
+        public ConversationPathService(EdgeService edgeService, VerticeService verticeService, ShortestPathService shortestPathService)
         {
-            edgeService = new EdgeService();
-            verticeService = new VerticeService();
-            shortestPathService = new ShortestPathService();
+            _edgeService =edgeService;
+            _verticeService = verticeService;
+            _shortestPathService = shortestPathService;
         }
 
         public List<string> GetPathsSubjects(List<string> goals, List<string> starts, List<ConversationList> conversationLists)
@@ -32,11 +32,11 @@ namespace ConversationSteerService
 
             foreach (var start in starts) //TODO: parallelize for performance maybe
             {
-                var vertices = verticeService.getVertices(conversationLists);
-                var edges = edgeService.getEdges(conversationLists);
+                var vertices = _verticeService.getVertices(conversationLists);
+                var edges = _edgeService.getEdges(conversationLists);
 
                 var graph = new Graph<string>(vertices, edges);
-                var shortestPathFunction = shortestPathService.GetShortestPathFunction(graph, start);
+                var shortestPathFunction = _shortestPathService.GetShortestPathFunction(graph, start);
                 foreach(var goal in goals)
                 {
                     var shortestPath = shortestPathFunction(goal);
