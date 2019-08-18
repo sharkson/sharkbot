@@ -12,15 +12,17 @@ namespace SharkbotApi.Services
         private readonly ConversationService _conversationService;
         private readonly AnalyzationService _analyzationService;
         private readonly ResponseService _responseService;
+        private readonly ReactionService _reactionService;
         private readonly ConversationUpdateService _covnersationUpdateService;
         private readonly UserService.UserService _userService;
         private readonly UpdateDatabasesService _updateDatabasesService;
 
-        public BotService(ConversationService conversationService, AnalyzationService analyzationService, ResponseService responseService, ConversationUpdateService conversationUpdateService, UserService.UserService userService, UpdateDatabasesService updateDatabasesService)
+        public BotService(ConversationService conversationService, AnalyzationService analyzationService, ResponseService responseService, ReactionService reactionService, ConversationUpdateService conversationUpdateService, UserService.UserService userService, UpdateDatabasesService updateDatabasesService)
         {
             _conversationService = conversationService;
             _analyzationService = analyzationService;
             _responseService = responseService;
+            _reactionService = reactionService;
             _covnersationUpdateService = conversationUpdateService;
             _userService = userService;
             _updateDatabasesService = updateDatabasesService;
@@ -52,6 +54,21 @@ namespace SharkbotApi.Services
             else
             {
                 response = _responseService.GetResponse(conversation, excludedTypes, subjectGoals);
+            }
+
+            return response;
+        }
+
+        public ChatResponse GetChatReaction(Conversation conversation, List<string> exclusiveTypes, List<string> requiredProperyMatches, List<string> excludedTypes, List<string> subjectGoals)
+        {
+            ChatResponse response;
+            if ((exclusiveTypes != null && exclusiveTypes.Count > 0) || (requiredProperyMatches != null && requiredProperyMatches.Count > 0))
+            {
+                response = _reactionService.GetReaction(conversation, exclusiveTypes, requiredProperyMatches, excludedTypes, subjectGoals);
+            }
+            else
+            {
+                response = _reactionService.GetReaction(conversation, excludedTypes, subjectGoals);
             }
 
             return response;

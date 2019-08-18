@@ -144,6 +144,7 @@ namespace ConversationMatcher.Services
 
             var replyMatchConfidence = _matchConfidenceService.GetMatchConfidence(targetResponse.naturalLanguageData, existingResponse.naturalLanguageData, targetResponse.botName);
             var replyPartScore = replyMatchConfidence * replyMatchRatio;
+            //TODO: lower the value of replyMatchConfidence if it's a shorter reply like "yes"
 
             var conversationProximityScore = _subjectConfidenceService.GetConversationProximityMatchConfidence(targetResponse.naturalLanguageData.proximitySubjects, existingResponse.naturalLanguageData.proximitySubjects);
             var proximityPartScore = conversationProximityScore * conversationProximityRatio;

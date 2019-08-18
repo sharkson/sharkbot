@@ -301,7 +301,7 @@ namespace StanfordNaturalLanguageService.Tests
 
         private MessageAnalyzationService GetService()
         {
-            var modelRootFolder = @"M:\sharkbot\stanford-corenlp-3.9.1-models";
+            var modelRootFolder = @"C:\sharkbot\stanford-corenlp-3.9.1-models";
             return new MessageAnalyzationService(modelRootFolder, new SentenceTypeService(new InterrogativeService(), new DeclarativeService(), new ImperativeService(), new ExclamatoryService()), new TokenService(), new OpenieService(), new VoiceService(), new SubjectService(), new ObjectService(), new PredicateService(), new SentimentAnalyzationService(new SentimentIntensityAnalyzer()));
         }
     }

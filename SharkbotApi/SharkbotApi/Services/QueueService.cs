@@ -52,6 +52,36 @@ namespace SharkbotApi.Services
             return Task.Delay(queueDelay).ContinueWith((task) => { return GetResponse(responseRequest); }).Result;
         }
 
+        public ChatResponse GetReaction(ResponseRequest responseRequest) //TODO:
+        {
+            if (responseRequest.requestTime == null)
+            {
+                responseRequest.requestTime = DateTime.Now;
+            }
+
+            var queueItem = new ConversationQueueItem { ConversationName = responseRequest.conversationName, RequestTime = responseRequest.requestTime };
+
+            if (!ConversationTracker.requestQueue.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
+            {
+                ConversationTracker.requestQueue.Enqueue(queueItem);
+            }
+
+            ConversationQueueItem peekedQueueItem;
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem))
+            {
+                if (peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
+                {
+                    var conversation = _conversationService.GetConversation(responseRequest.conversationName, responseRequest.type);
+                    var response = _botService.GetChatReaction(conversation, responseRequest.exclusiveTypes, responseRequest.requiredProperyMatches, responseRequest.excludedTypes, responseRequest.subjectGoals);
+                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+
+                    return response;
+                }
+                CleanQueue();
+            }
+            return Task.Delay(queueDelay).ContinueWith((task) => { return GetResponse(responseRequest); }).Result;
+        }
+
         public bool UpdateConversation(ChatRequest chat)
         {
             if (chat.requestTime == null)
@@ -109,6 +139,36 @@ namespace SharkbotApi.Services
             }
 
             return Task.Delay(queueDelay).ContinueWith((task) => { return UpdateConversation(conversationRequest); }).Result;
+        }
+
+        public bool UpdateConversation(ReactionRequest reactionRequest)
+        {
+            if (reactionRequest.requestTime == null)
+            {
+                reactionRequest.requestTime = DateTime.Now;
+            }
+
+            var queueItem = new ConversationQueueItem { ConversationName = reactionRequest.conversationName, RequestTime = reactionRequest.requestTime };
+
+            if (!ConversationTracker.requestQueue.Any(i => i.ConversationName == queueItem.ConversationName && i.RequestTime == queueItem.RequestTime))
+            {
+                ConversationTracker.requestQueue.Enqueue(queueItem);
+            }
+
+            ConversationQueueItem peekedQueueItem;
+            if (ConversationTracker.requestQueue.TryPeek(out peekedQueueItem))
+            {
+                if (peekedQueueItem.ConversationName == queueItem.ConversationName && peekedQueueItem.RequestTime == queueItem.RequestTime)
+                {
+                    var updated = _updateDatabasesService.UpdateDatabases(reactionRequest);
+                    ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+
+                    return updated;
+                }
+                CleanQueue();
+            }
+
+            return Task.Delay(queueDelay).ContinueWith((task) => { return UpdateConversation(reactionRequest); }).Result;
         }
 
         private void CleanQueue()

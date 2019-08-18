@@ -55,5 +55,25 @@ namespace SharkbotApi.Services
 
             return conversationUdpdated;
         }
+
+        public bool UpdateDatabases(ReactionRequest reactionRequest)
+        {
+            var conversation = _conversationService.GetConversation(reactionRequest.conversationName, reactionRequest.type);
+            var index = conversation.responses.FindLastIndex(r => r.chat.user == reactionRequest.chat.user && r.chat.message == reactionRequest.chat.message);
+
+            bool conversationUdpdated = false;
+
+            if (index >= 0)
+            {
+                conversation.responses[index].chat.reactions.Add(reactionRequest.reaction);
+
+                var analyzedConversation = _analyzationService.AnalyzeConversationAsync(conversation);
+                conversationUdpdated = _covnersationUpdateService.UpdateConversation(analyzedConversation, reactionRequest.type);
+
+                //TODO: update user's reactions //_userService.UpdateUsers(reactionRequest.reaction, conversation.responses[index]);
+            }
+
+            return conversationUdpdated;
+        }
     }
 }

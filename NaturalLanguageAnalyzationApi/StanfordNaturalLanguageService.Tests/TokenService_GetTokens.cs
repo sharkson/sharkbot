@@ -10,7 +10,7 @@ namespace StanfordNaturalLanguageService.Tests
         [Fact]
         public void CorrectTokens()
         {
-            Directory.SetCurrentDirectory(@"M:\sharkbot\stanford-corenlp-3.9.1-models");
+            Directory.SetCurrentDirectory(@"C:\sharkbot\stanford-corenlp-3.9.1-models");
 
             var properties = new Properties();
             properties.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
