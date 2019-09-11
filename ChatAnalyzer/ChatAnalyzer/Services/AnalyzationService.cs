@@ -2,6 +2,7 @@
 using ChatModels;
 using NaturalLanguageService.Services;
 using SharkbotConfiguration;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -45,8 +46,16 @@ namespace ChatAnalyzer.Services
                 if(response.naturalLanguageData == null || response.naturalLanguageData.AnalyzationVersion != ConfigurationService.AnalyzationVersion)
                 {
                     response.naturalLanguageData = new NaturalLanguageData { AnalyzationVersion = ConfigurationService.AnalyzationVersion };
-                    var result = Task.Run(async () => await _naturalLanguageApiService.AnalyzeMessageAsync(response.chat.message)).ConfigureAwait(false);
-                    response.naturalLanguageData.sentences = result.GetAwaiter().GetResult();
+
+                    try
+                    {
+                        var result = Task.Run(async () => await _naturalLanguageApiService.AnalyzeMessageAsync(response.chat.message)).ConfigureAwait(false);
+                        response.naturalLanguageData.sentences = result.GetAwaiter().GetResult();
+                    }
+                    catch(Exception)
+                    {
+
+                    }
                 }
 
                 response.naturalLanguageData.userlessMessage = _userlessMessageService.GetMessageWithoutUsers(response.chat.message, users);
