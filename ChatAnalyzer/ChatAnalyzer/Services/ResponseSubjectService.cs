@@ -8,6 +8,10 @@ namespace ChatAnalyzer.Services
         public List<ConversationSubject> GetSubjects(AnalyzedChat response)
         {
             var subjects = new List<ConversationSubject>();
+            if (response.naturalLanguageData.sentences == null)
+            {
+                return subjects;
+            }
 
             foreach (var sentence in response.naturalLanguageData.sentences)
             {
