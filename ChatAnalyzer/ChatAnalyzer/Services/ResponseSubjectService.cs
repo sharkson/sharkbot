@@ -16,7 +16,7 @@ namespace ChatAnalyzer.Services
             foreach (var sentence in response.naturalLanguageData.sentences)
             {
                 var token = sentence.Subject;
-                if(token != null && !string.IsNullOrWhiteSpace(token.Lemmas))
+                if (token != null && !string.IsNullOrWhiteSpace(token.Lemmas))
                 {
                     var index = subjects.FindIndex(s => s.Lemmas == token.Lemmas);
                     if (index >= 0)

@@ -24,13 +24,17 @@ namespace ConversationMatcher.Services
         private double GetNaturalLanguageDataScore(NaturalLanguageData target, NaturalLanguageData existing)
         {
             var sentencesScore = 0.0;
+            if (target.sentences == null || existing.sentences == null)
+            {
+                return 0;
+            }
             foreach (var targetSentence in target.sentences)
             {
                 var bestScore = 0.0;
-                foreach(var existingSentence in existing.sentences)
+                foreach (var existingSentence in existing.sentences)
                 {
                     var score = _sentenceScoreService.GetScore(targetSentence, existingSentence);
-                    if(score > bestScore)
+                    if (score > bestScore)
                     {
                         bestScore = score;
                     }

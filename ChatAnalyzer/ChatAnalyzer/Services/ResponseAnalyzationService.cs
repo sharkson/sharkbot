@@ -35,7 +35,7 @@ namespace ChatAnalyzer.Services
         {
             var maxConfidence = 1.0;
 
-            if(groupChat)
+            if (groupChat)
             {
                 if (!response.chat.message.ToLower().Contains("@" + chat.chat.user.ToLower()) && users.Where(u => response.chat.message.ToLower().Contains("@" + u.userName.ToLower())).Any())
                 {
@@ -59,7 +59,11 @@ namespace ChatAnalyzer.Services
             var wordCount = chat.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
             var readTimeMilliseconds = (wordCount / wordsReadPerSecond) * 1000.0;
 
-            var responseWordCount = response.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
+            var responseWordCount = 0;
+            if (response.naturalLanguageData.sentences != null)
+            {
+                responseWordCount = response.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
+            }
             var responseTimeMilliseconds = (responseWordCount / wordsTypedPerSecond) * 1000.0;
 
             var targetTime = readTimeMilliseconds + responseTimeMilliseconds;
@@ -67,9 +71,9 @@ namespace ChatAnalyzer.Services
 
             var difference = actualTime - targetTime;
 
-            if(difference < 0) //response too fast
+            if (difference < 0) //response too fast
             {
-                if(actualTime > (minimumResponseTime * 1000))
+                if (actualTime > (minimumResponseTime * 1000))
                 {
                     return maxConfidence * .5;
                 }

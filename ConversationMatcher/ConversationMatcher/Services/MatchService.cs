@@ -35,7 +35,7 @@ namespace ConversationMatcher.Services
             response.Add(conversation[replyIndex].analyzedChat);
             replyIndex++;
 
-            while(replyIndex < conversation.Count)
+            while (replyIndex < conversation.Count)
             {
                 if (IsChainedReply(response.Last().chat, conversation[replyIndex].analyzedChat.chat))
                 {
@@ -50,7 +50,7 @@ namespace ConversationMatcher.Services
 
             return response;
         }
-        
+
         private bool IsChainedReply(Chat chat, Chat reply)
         {
             var maximumReplyTime = 60000;
@@ -60,7 +60,7 @@ namespace ConversationMatcher.Services
         private List<string> getPathSubjects(Conversation targetConversation, List<ConversationList> conversationLists, List<string> subjectGoals)
         {
             var subjectStarts = new List<string>();
-            if(targetConversation.responses.Count > 0)
+            if (targetConversation.responses.Count > 0)
             {
                 var nld = targetConversation.responses.Last().naturalLanguageData;
                 foreach (var subject in nld.subjects)
@@ -95,10 +95,10 @@ namespace ConversationMatcher.Services
                         var subjectMatchConfidence = _subjectConfidenceService.GetSubjectMatchConfidence(targetConversation, conversation);
                         var readingLevelMatchConfidence = _readingLevelConfidenceService.GetReadingLevelConfidence(targetConversation.readingLevel, conversation.readingLevel);
 
-                        for(var index = 0; index < conversation.responses.Count(); index++)
+                        for (var index = 0; index < conversation.responses.Count(); index++)
                         {
                             var userlessReply = string.Empty;
-                            if(index + 1 < conversation.responses.Count())
+                            if (index + 1 < conversation.responses.Count())
                             {
                                 userlessReply = conversation.responses[index + 1].naturalLanguageData.userlessMessage;
                             }
@@ -133,7 +133,7 @@ namespace ConversationMatcher.Services
                 analyzedChat = existingResponse
             };
 
-            if(existingResponse.naturalLanguageData.responseConfidence == 0)
+            if (existingResponse.naturalLanguageData.responseConfidence == 0)
             {
                 return matchChat;
             }
@@ -158,8 +158,12 @@ namespace ConversationMatcher.Services
 
             var confidence = (replyPartScore + proximityPartScore + subjectMatchPartScore + readingLevelMatchPartScore + groupChatPartScore) * confidenceMultiplier;
 
-            var length = targetResponse.naturalLanguageData.sentences.SelectMany(s => s.Tokens).Count();
-            if(length < 5)
+            var length = 0;
+            if (targetResponse.naturalLanguageData.sentences != null)
+            {
+                length = targetResponse.naturalLanguageData.sentences.SelectMany(s => s.Tokens).Count();
+            }
+            if (length < 5)
             {
                 var exponent = 6 - length;
                 confidence = Math.Pow(confidence, exponent);
@@ -176,9 +180,9 @@ namespace ConversationMatcher.Services
         double goalBonus = .1;
         private double getBonusConfidence(AnalyzedChat existingResponse, List<string> pathSubjects)
         {
-            foreach(var conversationSubjects in existingResponse.naturalLanguageData.subjects)
+            foreach (var conversationSubjects in existingResponse.naturalLanguageData.subjects)
             {
-                if(pathSubjects.Contains(conversationSubjects.Lemmas))
+                if (pathSubjects.Contains(conversationSubjects.Lemmas))
                 {
                     return goalBonus;
                 }
