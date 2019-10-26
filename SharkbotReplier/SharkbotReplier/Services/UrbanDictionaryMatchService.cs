@@ -48,7 +48,7 @@ namespace SharkbotReplier.Services
 
         private ChatResponse GetSubjectDefinition(AnalyzedChat request)
         {
-            if (request.naturalLanguageData.sentences[0].Subject.Lemmas != null)
+            if (request.naturalLanguageData.sentences != null && request.naturalLanguageData.sentences[0].Subject.Lemmas != null)
             {
                 var definitions = new List<ChatResponse>();
 
