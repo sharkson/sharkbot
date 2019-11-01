@@ -56,13 +56,13 @@ namespace ChatAnalyzer.Services
                 return maxConfidence;
             }
 
-            var wordCount = chat.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
-            var readTimeMilliseconds = (wordCount / wordsReadPerSecond) * 1000.0;
-
+            var readTimeMilliseconds = 0.0;
             var responseWordCount = 0;
             if (response.naturalLanguageData.sentences != null)
             {
                 responseWordCount = response.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
+                var wordCount = chat.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
+                readTimeMilliseconds = (wordCount / wordsReadPerSecond) * 1000.0;
             }
             var responseTimeMilliseconds = (responseWordCount / wordsTypedPerSecond) * 1000.0;
 
