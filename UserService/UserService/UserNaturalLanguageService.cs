@@ -22,6 +22,11 @@ namespace UserService
 
         public bool isNaturalLanguageSelfProperty(AnalyzedChat chat, string match)
         {
+            if (chat.naturalLanguageData.sentences == null)
+            {
+                return false;
+            }
+
             var tokens = chat.naturalLanguageData.sentences.SelectMany(s => s.Tokens);
             var token = tokens.FirstOrDefault(t => t.Word.ToLower() == match.ToLower());
             if(token != null && token.PosTag.StartsWith("VB"))
