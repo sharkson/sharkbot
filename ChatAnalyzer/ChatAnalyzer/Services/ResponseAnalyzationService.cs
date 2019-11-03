@@ -58,7 +58,7 @@ namespace ChatAnalyzer.Services
 
             var readTimeMilliseconds = 0.0;
             var responseWordCount = 0;
-            if (response.naturalLanguageData.sentences != null)
+            if (response.naturalLanguageData.sentences != null && chat.naturalLanguageData.sentences != null)
             {
                 responseWordCount = response.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
                 var wordCount = chat.naturalLanguageData.sentences.Sum(s => s.Tokens.Count);
