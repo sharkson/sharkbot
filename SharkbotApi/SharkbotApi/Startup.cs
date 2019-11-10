@@ -1,6 +1,7 @@
 ﻿using ChatAnalyzer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NaturalLanguageService.Services;
@@ -9,6 +10,7 @@ using SharkbotConfiguration;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SharkbotApi
 {
@@ -23,7 +25,7 @@ namespace SharkbotApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(option => option.EnableEndpointRouting = false);
 
             var corsUrls = Configuration.GetSection("CORS").Get<List<string>>();
 
@@ -65,7 +67,7 @@ namespace SharkbotApi
             ConversationDatabase.ConversationDatabase.LoadDatabase(ConversationDatabase.ConversationDatabase.conversationDirectory, analyzationService);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -73,10 +75,9 @@ namespace SharkbotApi
             }
 
             app.UseCors("AllowAllOrigins");
+            app.UseCors("AllowSpecificOrigin");
 
             app.UseMvc();
-
-            app.UseCors("AllowSpecificOrigin");
         }
     }
 }
