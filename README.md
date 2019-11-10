@@ -5,12 +5,12 @@ a chatbot api that uses natural language processing and machine learning to talk
 - Open the SharkbotApi solution and change appsettings.json.  
 - Update the NaturalLanguage settings to point to the files in \sharkbot\Data\
 - Create a ConversationDirectory and UserDirectory
-- run the SharkbotApi project
+- run the NaturalLanguageAnalyzationApi and the SharkbotApi
 - train the bot by feeding it conversations using a client or by placing conversation json files in your database before you run it
 
 ## clients
-- https://github.com/sharkson/angular-sharkbot
-- https://github.com/sharkson/DiscordSpecialSharkbot
+- https://github.com/sharkson/AngularSharkbot
+- https://github.com/sharkson/DiscordSpecialBot
 
 ## performance
 - The initial loading of the ConversationDirectory is much faster if it's located on an SSD compared to an HDD
