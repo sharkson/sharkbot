@@ -9,9 +9,10 @@ a chatbot api that uses natural language processing and machine learning to talk
 - train the bot by feeding it conversations using a client or by placing conversation json files in your database before you run it
 
 ## clients
-- https://github.com/sharkson/AngularSharkbot
 - https://github.com/sharkson/DiscordSpecialBot
+- https://github.com/sharkson/AngularSharkbot
 - https://github.com/sharkson/BlazorBot
+- https://github.com/sharkson/PlugDjSharkbot
 
 ## performance
 - The initial loading of the ConversationDirectory is much faster if it's located on an SSD compared to an HDD
