@@ -11,6 +11,7 @@ a chatbot api that uses natural language processing and machine learning to talk
 ## clients
 - https://github.com/sharkson/AngularSharkbot
 - https://github.com/sharkson/DiscordSpecialBot
+- https://github.com/sharkson/BlazorBot
 
 ## performance
 - The initial loading of the ConversationDirectory is much faster if it's located on an SSD compared to an HDD
