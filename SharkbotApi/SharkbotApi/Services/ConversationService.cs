@@ -74,6 +74,23 @@ namespace SharkbotApi.Services
             return conversation;
         }
 
+
+        public bool ConversationExists(string conversationName, string type)
+        {
+            var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase;
+
+            if (conversationLists.ContainsKey(type))
+            {
+                var conversationList = conversationLists[type];
+                if (conversationList != null && conversationList.conversations.ContainsKey(conversationName))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static T DeepCopy<T>(T other)
         {
             using (MemoryStream ms = new MemoryStream())

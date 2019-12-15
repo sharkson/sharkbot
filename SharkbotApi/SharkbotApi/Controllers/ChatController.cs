@@ -36,7 +36,7 @@ namespace SharkbotApi.Controllers
             }
 
             dynamic metadata = null;
-            if(chat != null && chat.metadata != null)
+            if(chat != null)
             {
                 metadata = chat.metadata;
             }
@@ -45,9 +45,9 @@ namespace SharkbotApi.Controllers
 
         private ChatRequest cleanRequest(ChatRequest chat)
         {
-            if (chat.requiredProperyMatches == null)
+            if (chat.requiredPropertyMatches == null)
             {
-                chat.requiredProperyMatches = new List<string>();
+                chat.requiredPropertyMatches = new List<string>();
             }
             if (chat.exclusiveTypes == null)
             {
@@ -74,7 +74,7 @@ namespace SharkbotApi.Controllers
                 conversationName = chat.conversationName,
                 excludedTypes = chat.excludedTypes,
                 exclusiveTypes = chat.exclusiveTypes,
-                requiredProperyMatches = chat.requiredProperyMatches,
+                requiredProperyMatches = chat.requiredPropertyMatches,
                 subjectGoals = chat.subjectGoals,
                 type = chat.type,
 

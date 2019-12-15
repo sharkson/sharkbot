@@ -37,6 +37,11 @@ namespace SharkbotApi.Services
 
         public bool UpdateDatabases(ConversationRequest conversationRequest)
         {
+            if(_conversationService.ConversationExists(conversationRequest.name, conversationRequest.type))
+            {
+                return false;
+            }
+
             var conversation = new Conversation
             {
                 name = conversationRequest.name,

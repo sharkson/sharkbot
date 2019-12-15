@@ -11,15 +11,17 @@ namespace SharkbotApi.Services
         private readonly BotService _botService;
         private readonly ConversationService _conversationService;
         private readonly UpdateDatabasesService _updateDatabasesService;
+        private readonly StalkerService _stalkerService;
 
         private readonly int queueDelay = 500;
         private readonly int maximumDelay = 10000;
 
-        public QueueService(BotService botService, ConversationService conversationService, UpdateDatabasesService updateDatabasesService)
+        public QueueService(BotService botService, ConversationService conversationService, UpdateDatabasesService updateDatabasesService, StalkerService stalkerService)
         {
             _botService =botService;
             _conversationService =conversationService;
             _updateDatabasesService = updateDatabasesService;
+            _stalkerService = stalkerService;
         }
 
         public ChatResponse GetResponse(ResponseRequest responseRequest)
@@ -103,6 +105,7 @@ namespace SharkbotApi.Services
                 {
                     var updated = _updateDatabasesService.UpdateDatabases(chat);
                     ConversationTracker.requestQueue.TryDequeue(out peekedQueueItem);
+                    _stalkerService.StalkUser(chat.chat.user);
 
                     return updated;
                 }

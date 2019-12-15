@@ -10,7 +10,6 @@ using SharkbotConfiguration;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace SharkbotApi
 {
@@ -44,6 +43,10 @@ namespace SharkbotApi
             client.BaseAddress = new Uri(naturalLanguageApiUrl);
             var naturalLanguageApiService = new NaturalLanguageApiService(client);
 
+            var redditStalkerHttpClient = new HttpClient();
+            var redditStalkerApiUrl = Configuration.GetSection("Stalker:Reddit").Value;
+            redditStalkerHttpClient.BaseAddress = new Uri(redditStalkerApiUrl);
+
             var analyzationService = new AnalyzationService(new ConversationSubjectService(new ResponseSubjectService()), new ResponseAnalyzationService(), new ConversationTypeService(), new UserlessMessageService(), new ConversationReadingLevelService(), new ResponseSubjectService(), naturalLanguageApiService);
             var userService = new UserService.UserService(new UserService.UserNickNameService(), new UserService.UserPropertyService(new UserService.UserNaturalLanguageService(), new UserService.PropertyMatchService(), new UserService.PropertyFromQuestionService()), new UserService.OtherUserPropertyService(new UserService.UserNaturalLanguageService(), new UserService.PropertyMatchService()), new UserService.UserDerivedPropertyService(), new UserDatabase.Services.UserSaveService());
             var updateDatabaseService = new UpdateDatabasesService(new ConversationService(), analyzationService, new ConversationDatabase.Services.ConversationUpdateService(new ConversationDatabase.Services.ConversationSaveService()), userService);
@@ -55,8 +58,8 @@ namespace SharkbotApi
                 new BotService(new ConversationService(), analyzationService, 
                 new SharkbotReplier.Services.ResponseService(conversationMatchService, userPropertyMatchService, new SharkbotReplier.Services.LyricsMatchService(), new GoogleMatchService.GoogleMatchService(new ScrapySharp.Network.ScrapingBrowser()), new SharkbotReplier.Services.UrbanDictionaryMatchService(), new SharkbotReplier.Services.SalutationService(), new SharkbotReplier.Services.ResponseConversionService(new UserService.UserPropertyService(new UserService.UserNaturalLanguageService(), new UserService.PropertyMatchService(), new UserService.PropertyFromQuestionService()), new UserService.PropertyValueService())),
                 new SharkbotReplier.Services.ReactionService(new SharkbotReplier.Services.ConversationReactionMatchService(new ConversationMatcher.Services.BestReactionMatchService(matchService))),
-                new ConversationDatabase.Services.ConversationUpdateService(new ConversationDatabase.Services.ConversationSaveService()), userService, updateDatabaseService), new ConversationService(), updateDatabaseService);
-            services.AddSingleton<QueueService>(queueService);
+                new ConversationDatabase.Services.ConversationUpdateService(new ConversationDatabase.Services.ConversationSaveService()), userService, updateDatabaseService), new ConversationService(), updateDatabaseService, new StalkerService(redditStalkerHttpClient));
+            services.AddSingleton(queueService);
 
             ConfigurationService.AnalyzationVersion = Configuration.GetSection("NaturalLanguage:AnalyzationVersion").Value;
 

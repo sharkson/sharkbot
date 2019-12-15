@@ -16,6 +16,6 @@ namespace ChatModels
         public string message { get; set; }
         public long time { get; set; }
         public string botName { get; set; }
-        public List<Reaction> reactions { get; set; }
+        public List<Reaction>? reactions { get; set; }
     }
 }

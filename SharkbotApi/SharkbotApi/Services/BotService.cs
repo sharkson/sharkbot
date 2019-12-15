@@ -41,7 +41,7 @@ namespace SharkbotApi.Services
             }
             _userService.UpdateUsers(analyzedConversation.responses.Last(), inResponseTo);
 
-            return GetChatResponse(conversation, chat.exclusiveTypes, chat.requiredProperyMatches, chat.excludedTypes, chat.subjectGoals);
+            return GetChatResponse(conversation, chat.exclusiveTypes, chat.requiredPropertyMatches, chat.excludedTypes, chat.subjectGoals);
         }
 
         public ChatResponse GetChatResponse(Conversation conversation, List<string> exclusiveTypes, List<string> requiredProperyMatches, List<string> excludedTypes, List<string> subjectGoals)
