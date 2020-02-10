@@ -75,7 +75,7 @@ namespace SharkbotApi.Services
         }
 
 
-        public bool ConversationExists(string conversationName, string type)
+        public int ConversationLength(string conversationName, string type)
         {
             var conversationLists = ConversationDatabase.ConversationDatabase.conversationDatabase;
 
@@ -84,11 +84,16 @@ namespace SharkbotApi.Services
                 var conversationList = conversationLists[type];
                 if (conversationList != null && conversationList.conversations.ContainsKey(conversationName))
                 {
-                    return true;
+                    var conversation = conversationList.conversations[conversationName];
+                    if(conversation.responses != null)
+                    {
+                        return conversation.responses.Count();
+                    }
+                    return 0;
                 }
             }
 
-            return false;
+            return 0;
         }
 
         public static T DeepCopy<T>(T other)

@@ -37,7 +37,7 @@ namespace SharkbotApi.Services
 
         public bool UpdateDatabases(ConversationRequest conversationRequest)
         {
-            if(_conversationService.ConversationExists(conversationRequest.name, conversationRequest.type))
+            if(_conversationService.ConversationLength(conversationRequest.name, conversationRequest.type) >= conversationRequest.responses.Count())
             {
                 return false;
             }
