@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Annytab.Stemmer" Version="1.2.3" />
     <PackageReference Include="Knuppe.SharpNL" Version="1.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
