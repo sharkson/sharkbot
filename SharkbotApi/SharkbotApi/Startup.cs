@@ -37,6 +37,7 @@ namespace SharkbotApi
             services.AddSingleton<ConversationRequestValidationService, ConversationRequestValidationService>();
             services.AddSingleton<ResponseRequestValidationService, ResponseRequestValidationService>();
             services.AddSingleton<ReactionRequestValidationService, ReactionRequestValidationService>();
+            services.AddSingleton<ConversationService, ConversationService>();
 
             var client = new HttpClient();
             var naturalLanguageApiUrl = Configuration.GetSection("NaturalLanguage:ApiUrl").Value;
