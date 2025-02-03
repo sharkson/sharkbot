@@ -20,7 +20,8 @@ a chatbot api that uses natural language processing and machine learning to talk
 - It will churn through gigabytes of conversation data and reply in under a second even on a slow PC
 
 ## live example bot
-- You can add a live version of sharkbot to your discord channel
+- You can chat with a live version of sharkbot here https://eliteownage.com/sharkbotlivechat.html
+- You can also add a live version of sharkbot to your discord channel
 - https://discordapp.com/oauth2/authorize?client_id=268518279809597453&scope=bot&permissions=0
 
 ## features
